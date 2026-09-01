@@ -1,0 +1,49 @@
+{
+  "name": "n8n-nodes-qwease",
+  "version": "0.1.0",
+  "description": "n8n community node for the Qwease ITSM API (tickets, helpdesk, MSP)",
+  "license": "MIT",
+  "homepage": "https://qwease.fr",
+  "author": {
+    "name": "Qwease",
+    "email": "contact@qwease.fr"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qwease/n8n-nodes-qwease.git"
+  },
+  "keywords": [
+    "n8n-community-node-package",
+    "n8n",
+    "qwease",
+    "itsm",
+    "helpdesk",
+    "msp"
+  ],
+  "main": "index.js",
+  "scripts": {
+    "build": "n8n-node build",
+    "dev": "n8n-node dev",
+    "lint": "n8n-node lint",
+    "release": "n8n-node release"
+  },
+  "files": [
+    "dist"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [
+      "dist/credentials/QweaseApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/Qwease/Qwease.node.js"
+    ]
+  },
+  "devDependencies": {
+    "@n8n/node-cli": "^0.23.0",
+    "typescript": "^5.8.0"
+  },
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  }
+}
