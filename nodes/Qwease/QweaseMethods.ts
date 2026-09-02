@@ -50,3 +50,34 @@ export async function getUsers(this: ILoadOptionsFunctions): Promise<INodeProper
     return { name: label, value: id };
   });
 }
+
+export async function getClients(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+  const response = await qweaseApiRequest.call(this, 'GET', '/client/');
+  const clients = qweaseListFromResponse(response);
+
+  if (clients.length === 0) {
+    return [{ name: 'No organizations found', value: '' }];
+  }
+
+  return clients.map((client) => {
+    const id = client.id as number;
+    const label =
+      (client.display_name as string) || (client.name as string) || `Organization ${id}`;
+    return { name: label, value: id };
+  });
+}
+
+export async function getTeams(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+  const response = await qweaseApiRequest.call(this, 'GET', '/teams/');
+  const teams = qweaseListFromResponse(response);
+
+  if (teams.length === 0) {
+    return [{ name: 'No teams found', value: '' }];
+  }
+
+  return teams.map((team) => {
+    const id = team.id as number;
+    const label = (team.display_name as string) || (team.name as string) || `Team ${id}`;
+    return { name: label, value: id };
+  });
+}

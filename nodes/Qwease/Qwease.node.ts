@@ -6,7 +6,8 @@ import type {
 } from 'n8n-workflow';
 
 import { qweaseApiRequest, qweaseListFromResponse } from './GenericFunctions';
-import { getForms, getUsers } from './QweaseMethods';
+import { buildTicketBodyFromParameters } from './TicketBody';
+import { getClients, getForms, getTeams, getUsers } from './QweaseMethods';
 import { ticketFields, ticketOperations } from './QweaseDescription';
 
 export class Qwease implements INodeType {
@@ -53,6 +54,8 @@ export class Qwease implements INodeType {
     loadOptions: {
       getForms,
       getUsers,
+      getClients,
+      getTeams,
     },
   };
 
@@ -74,13 +77,7 @@ export class Qwease implements INodeType {
               throw new Error('Select a Form and For User (refresh lists if empty).');
             }
 
-            const body = {
-              type: this.getNodeParameter('type', i) as string,
-              form,
-              for_user: forUser,
-              resume: this.getNodeParameter('resume', i) as string,
-              description: this.getNodeParameter('description', i) as string,
-            };
+            const body = buildTicketBodyFromParameters.call(this, i, true);
             const response = await qweaseApiRequest.call(this, 'POST', '/ticket/', body);
             returnData.push({ json: response, pairedItem: { item: i } });
           } else if (operation === 'get') {
@@ -98,9 +95,10 @@ export class Qwease implements INodeType {
             }
           } else if (operation === 'update') {
             const ticketId = this.getNodeParameter('ticketId', i) as string;
-            const body = {
-              resume: this.getNodeParameter('resume', i) as string,
-            };
+            const body = buildTicketBodyFromParameters.call(this, i, false);
+            if (Object.keys(body).length === 0) {
+              throw new Error('Set at least one field to update.');
+            }
             const response = await qweaseApiRequest.call(this, 'PATCH', `/ticket/${ticketId}/`, body);
             returnData.push({ json: response, pairedItem: { item: i } });
           }

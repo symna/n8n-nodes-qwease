@@ -51,7 +51,9 @@ n8n start
 
 After code changes: **always** `npm run build` then restart n8n.
 
-**Create ticket:** pick **Type** (INC/REQ) then **Form** and **For User** load from API (dropdowns).
+**Create ticket:** pick **Type** (INC/REQ), **Form**, **For User**, plus optional fields (priority, assignment, status, custom fields, etc.).
+
+**Update ticket:** any combination of subject, description, priority, assignment, dates, custom fields.
 
 Release (tags trigger npm publish with provenance):
 

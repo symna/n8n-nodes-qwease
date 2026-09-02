@@ -111,7 +111,33 @@ export const ticketFields: INodeProperties[] = [
     displayOptions: {
       show: {
         resource: ['ticket'],
-        operation: ['create', 'update'],
+        operation: ['create'],
+      },
+    },
+    default: '',
+  },
+  {
+    displayName: 'Subject',
+    name: 'resume',
+    type: 'string',
+    displayOptions: {
+      show: {
+        resource: ['ticket'],
+        operation: ['update'],
+      },
+    },
+    default: '',
+  },
+  {
+    displayName: 'Description',
+    name: 'description',
+    type: 'string',
+    required: true,
+    typeOptions: { rows: 4 },
+    displayOptions: {
+      show: {
+        resource: ['ticket'],
+        operation: ['create'],
       },
     },
     default: '',
@@ -124,10 +150,211 @@ export const ticketFields: INodeProperties[] = [
     displayOptions: {
       show: {
         resource: ['ticket'],
-        operation: ['create'],
+        operation: ['update'],
       },
     },
     default: '',
+  },
+  {
+    displayName: 'Priority',
+    name: 'priority',
+    type: 'options',
+    options: [
+      { name: 'Very High', value: 'very_high' },
+      { name: 'High', value: 'high' },
+      { name: 'Medium', value: 'medium' },
+      { name: 'Low', value: 'low' },
+      { name: 'Very Low', value: 'very_low' },
+    ],
+    displayOptions: {
+      show: {
+        resource: ['ticket'],
+        operation: ['create', 'update'],
+      },
+    },
+    default: '',
+    description: 'Ticket priority',
+  },
+  {
+    displayName: 'Client Organization',
+    name: 'client',
+    type: 'options',
+    displayOptions: {
+      show: {
+        resource: ['ticket'],
+        operation: ['create', 'update'],
+      },
+    },
+    typeOptions: {
+      loadOptionsMethod: 'getClients',
+    },
+    default: '',
+    description: 'Organization (client) for the ticket',
+  },
+  {
+    displayName: 'Requested By',
+    name: 'askedBy',
+    type: 'options',
+    displayOptions: {
+      show: {
+        resource: ['ticket'],
+        operation: ['create', 'update'],
+      },
+    },
+    typeOptions: {
+      loadOptionsMethod: 'getUsers',
+    },
+    default: '',
+    description: 'User who requested the ticket (asked_by)',
+  },
+  {
+    displayName: 'Assigned To',
+    name: 'assignedTo',
+    type: 'options',
+    displayOptions: {
+      show: {
+        resource: ['ticket'],
+        operation: ['create', 'update'],
+      },
+    },
+    typeOptions: {
+      loadOptionsMethod: 'getUsers',
+    },
+    default: '',
+    description: 'Agent responsible for the ticket',
+  },
+  {
+    displayName: 'Assigned Group',
+    name: 'assignedGroup',
+    type: 'options',
+    displayOptions: {
+      show: {
+        resource: ['ticket'],
+        operation: ['create', 'update'],
+      },
+    },
+    typeOptions: {
+      loadOptionsMethod: 'getTeams',
+    },
+    default: '',
+    description: 'Support team assigned to the ticket',
+  },
+  {
+    displayName: 'Status ID',
+    name: 'statusId',
+    type: 'number',
+    displayOptions: {
+      show: {
+        resource: ['ticket'],
+        operation: ['create', 'update'],
+      },
+    },
+    default: '',
+    description: 'Status item ID (statut) from your Qwease tenant',
+  },
+  {
+    displayName: 'Process',
+    name: 'process',
+    type: 'options',
+    options: [
+      { name: 'Open', value: 'open' },
+      { name: 'Closed', value: 'closed' },
+    ],
+    displayOptions: {
+      show: {
+        resource: ['ticket'],
+        operation: ['create', 'update'],
+      },
+    },
+    default: '',
+    description: 'Ticket lifecycle process state',
+  },
+  {
+    displayName: 'Desired Resolution Date',
+    name: 'desiredResolutionDate',
+    type: 'dateTime',
+    displayOptions: {
+      show: {
+        resource: ['ticket'],
+        operation: ['create', 'update'],
+      },
+    },
+    default: '',
+  },
+  {
+    displayName: 'Follow Up Count',
+    name: 'followUpCount',
+    type: 'number',
+    displayOptions: {
+      show: {
+        resource: ['ticket'],
+        operation: ['create', 'update'],
+      },
+    },
+    default: '',
+  },
+  {
+    displayName: 'Last Follow Up',
+    name: 'lastFollowUp',
+    type: 'dateTime',
+    displayOptions: {
+      show: {
+        resource: ['ticket'],
+        operation: ['create', 'update'],
+      },
+    },
+    default: '',
+  },
+  {
+    displayName: 'Task IDs',
+    name: 'taskIds',
+    type: 'string',
+    displayOptions: {
+      show: {
+        resource: ['ticket'],
+        operation: ['create', 'update'],
+      },
+    },
+    default: '',
+    description: 'Comma-separated task IDs to link (e.g. 12, 34)',
+  },
+  {
+    displayName: 'Custom Fields',
+    name: 'customFieldsUi',
+    type: 'fixedCollection',
+    typeOptions: {
+      multipleValues: true,
+    },
+    displayOptions: {
+      show: {
+        resource: ['ticket'],
+        operation: ['create', 'update'],
+      },
+    },
+    default: {},
+    placeholder: 'Add Custom Field',
+    description:
+      'Keys = technical_name from Qwease (e.g. Customfield1). List fields = option ID as value.',
+    options: [
+      {
+        displayName: 'Field',
+        name: 'field',
+        values: [
+          {
+            displayName: 'Technical Name',
+            name: 'key',
+            type: 'string',
+            default: '',
+          },
+          {
+            displayName: 'Value',
+            name: 'value',
+            type: 'string',
+            default: '',
+          },
+        ],
+      },
+    ],
   },
   {
     displayName: 'Return All',
