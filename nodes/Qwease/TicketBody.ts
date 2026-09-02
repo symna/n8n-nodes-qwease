@@ -12,18 +12,6 @@ function parseOptionalInt(value: unknown): number | undefined {
   return Number.isNaN(n) ? undefined : n;
 }
 
-function parseTaskIds(value: unknown): number[] | undefined {
-  if (value === undefined || value === null || value === '') {
-    return undefined;
-  }
-  const raw = String(value);
-  const ids = raw
-    .split(',')
-    .map((part) => parseInt(part.trim(), 10))
-    .filter((n) => !Number.isNaN(n));
-  return ids.length ? ids : undefined;
-}
-
 function buildCustomFieldsFromUi(customFieldsUi: CustomFieldsUi | undefined): IDataObject | undefined {
   const fields = customFieldsUi?.field;
   if (!fields?.length) {
@@ -68,11 +56,6 @@ export function buildTicketBodyFromParameters(
     body.priority = priority;
   }
 
-  const client = parseOptionalInt(this.getNodeParameter('client', itemIndex, ''));
-  if (client !== undefined) {
-    body.client = client;
-  }
-
   const askedBy = parseOptionalInt(this.getNodeParameter('askedBy', itemIndex, ''));
   if (askedBy !== undefined) {
     body.asked_by = askedBy;
@@ -93,11 +76,6 @@ export function buildTicketBodyFromParameters(
     body.statut = statut;
   }
 
-  const process = this.getNodeParameter('process', itemIndex, '') as string;
-  if (process) {
-    body.process = process;
-  }
-
   const desiredResolutionDate = this.getNodeParameter(
     'desiredResolutionDate',
     itemIndex,
@@ -105,21 +83,6 @@ export function buildTicketBodyFromParameters(
   ) as string;
   if (desiredResolutionDate) {
     body.desired_resolution_date = desiredResolutionDate;
-  }
-
-  const followUpCount = parseOptionalInt(this.getNodeParameter('followUpCount', itemIndex, ''));
-  if (followUpCount !== undefined) {
-    body.follow_up_count = followUpCount;
-  }
-
-  const lastFollowUp = this.getNodeParameter('lastFollowUp', itemIndex, '') as string;
-  if (lastFollowUp) {
-    body.last_follow_up = lastFollowUp;
-  }
-
-  const tasks = parseTaskIds(this.getNodeParameter('taskIds', itemIndex, ''));
-  if (tasks) {
-    body.tasks = tasks;
   }
 
   const customFields = buildCustomFieldsFromUi(

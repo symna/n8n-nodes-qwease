@@ -7,7 +7,7 @@ import type {
 
 import { qweaseApiRequest, qweaseListFromResponse } from './GenericFunctions';
 import { buildTicketBodyFromParameters } from './TicketBody';
-import { getClients, getForms, getTeams, getUsers } from './QweaseMethods';
+import { getForms, getTeams, getUsers } from './QweaseMethods';
 import { ticketFields, ticketOperations } from './QweaseDescription';
 
 export class Qwease implements INodeType {
@@ -54,7 +54,6 @@ export class Qwease implements INodeType {
     loadOptions: {
       getForms,
       getUsers,
-      getClients,
       getTeams,
     },
   };

@@ -176,22 +176,6 @@ export const ticketFields: INodeProperties[] = [
     description: 'Ticket priority',
   },
   {
-    displayName: 'Client Organization',
-    name: 'client',
-    type: 'options',
-    displayOptions: {
-      show: {
-        resource: ['ticket'],
-        operation: ['create', 'update'],
-      },
-    },
-    typeOptions: {
-      loadOptionsMethod: 'getClients',
-    },
-    default: '',
-    description: 'Organization (client) for the ticket',
-  },
-  {
     displayName: 'Requested By',
     name: 'askedBy',
     type: 'options',
@@ -253,23 +237,6 @@ export const ticketFields: INodeProperties[] = [
     description: 'Status item ID (statut) from your Qwease tenant',
   },
   {
-    displayName: 'Process',
-    name: 'process',
-    type: 'options',
-    options: [
-      { name: 'Open', value: 'open' },
-      { name: 'Closed', value: 'closed' },
-    ],
-    displayOptions: {
-      show: {
-        resource: ['ticket'],
-        operation: ['create', 'update'],
-      },
-    },
-    default: '',
-    description: 'Ticket lifecycle process state',
-  },
-  {
     displayName: 'Desired Resolution Date',
     name: 'desiredResolutionDate',
     type: 'dateTime',
@@ -280,43 +247,6 @@ export const ticketFields: INodeProperties[] = [
       },
     },
     default: '',
-  },
-  {
-    displayName: 'Follow Up Count',
-    name: 'followUpCount',
-    type: 'number',
-    displayOptions: {
-      show: {
-        resource: ['ticket'],
-        operation: ['create', 'update'],
-      },
-    },
-    default: '',
-  },
-  {
-    displayName: 'Last Follow Up',
-    name: 'lastFollowUp',
-    type: 'dateTime',
-    displayOptions: {
-      show: {
-        resource: ['ticket'],
-        operation: ['create', 'update'],
-      },
-    },
-    default: '',
-  },
-  {
-    displayName: 'Task IDs',
-    name: 'taskIds',
-    type: 'string',
-    displayOptions: {
-      show: {
-        resource: ['ticket'],
-        operation: ['create', 'update'],
-      },
-    },
-    default: '',
-    description: 'Comma-separated task IDs to link (e.g. 12, 34)',
   },
   {
     displayName: 'Custom Fields',
