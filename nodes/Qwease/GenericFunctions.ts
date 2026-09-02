@@ -3,12 +3,26 @@ import type {
   IHttpRequestMethods,
   IHttpRequestOptions,
   IDataObject,
+  ILoadOptionsFunctions,
 } from 'n8n-workflow';
 
 const BASE_URL = 'https://rest.qwease.fr/api';
 
+type QweaseContext = IExecuteFunctions | ILoadOptionsFunctions;
+
+export function qweaseListFromResponse(response: IDataObject | IDataObject[]): IDataObject[] {
+  if (Array.isArray(response)) {
+    return response;
+  }
+  const results = response.results ?? response.data;
+  if (Array.isArray(results)) {
+    return results;
+  }
+  return [];
+}
+
 export async function qweaseApiRequest(
-  this: IExecuteFunctions,
+  this: QweaseContext,
   method: IHttpRequestMethods,
   endpoint: string,
   body: IDataObject = {},
@@ -28,5 +42,5 @@ export async function qweaseApiRequest(
     options.qs = qs;
   }
 
-  return this.helpers.httpRequestWithAuthentication.call(this, 'qweaseApi', options);
+  return await this.helpers.httpRequestWithAuthentication.call(this, 'qweaseApi', options);
 }

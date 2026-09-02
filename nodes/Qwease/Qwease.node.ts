@@ -5,7 +5,9 @@ import type {
   INodeTypeDescription,
 } from 'n8n-workflow';
 
-import { qweaseApiRequest } from './GenericFunctions';
+import { qweaseApiRequest, qweaseListFromResponse } from './GenericFunctions';
+import { getForms, getUsers } from './QweaseMethods';
+import { ticketFields, ticketOperations } from './QweaseDescription';
 
 export class Qwease implements INodeType {
   description: INodeTypeDescription = {
@@ -42,148 +44,16 @@ export class Qwease implements INodeType {
         ],
         default: 'ticket',
       },
-      {
-        displayName: 'Operation',
-        name: 'operation',
-        type: 'options',
-        noDataExpression: true,
-        displayOptions: {
-          show: {
-            resource: ['ticket'],
-          },
-        },
-        options: [
-          {
-            name: 'Create',
-            value: 'create',
-            action: 'Create a ticket',
-          },
-          {
-            name: 'Get',
-            value: 'get',
-            action: 'Get a ticket',
-          },
-          {
-            name: 'Get Many',
-            value: 'getAll',
-            action: 'Get many tickets',
-          },
-          {
-            name: 'Update',
-            value: 'update',
-            action: 'Update a ticket',
-          },
-        ],
-        default: 'getAll',
-      },
-      {
-        displayName: 'Ticket ID',
-        name: 'ticketId',
-        type: 'string',
-        required: true,
-        displayOptions: {
-          show: {
-            resource: ['ticket'],
-            operation: ['get', 'update'],
-          },
-        },
-        default: '',
-      },
-      {
-        displayName: 'Type',
-        name: 'type',
-        type: 'options',
-        options: [
-          { name: 'Incident (INC)', value: 'INC' },
-          { name: 'Request (REQ)', value: 'REQ' },
-        ],
-        displayOptions: {
-          show: {
-            resource: ['ticket'],
-            operation: ['create'],
-          },
-        },
-        default: 'INC',
-      },
-      {
-        displayName: 'Form ID',
-        name: 'form',
-        type: 'number',
-        required: true,
-        displayOptions: {
-          show: {
-            resource: ['ticket'],
-            operation: ['create'],
-          },
-        },
-        default: 1,
-      },
-      {
-        displayName: 'For User ID',
-        name: 'forUser',
-        type: 'number',
-        required: true,
-        displayOptions: {
-          show: {
-            resource: ['ticket'],
-            operation: ['create'],
-          },
-        },
-        default: 1,
-      },
-      {
-        displayName: 'Subject',
-        name: 'resume',
-        type: 'string',
-        required: true,
-        displayOptions: {
-          show: {
-            resource: ['ticket'],
-            operation: ['create', 'update'],
-          },
-        },
-        default: '',
-      },
-      {
-        displayName: 'Description',
-        name: 'description',
-        type: 'string',
-        typeOptions: { rows: 4 },
-        displayOptions: {
-          show: {
-            resource: ['ticket'],
-            operation: ['create'],
-          },
-        },
-        default: '',
-      },
-      {
-        displayName: 'Return All',
-        name: 'returnAll',
-        type: 'boolean',
-        displayOptions: {
-          show: {
-            resource: ['ticket'],
-            operation: ['getAll'],
-          },
-        },
-        default: false,
-      },
-      {
-        displayName: 'Limit',
-        name: 'limit',
-        type: 'number',
-        typeOptions: { minValue: 1 },
-        displayOptions: {
-          show: {
-            resource: ['ticket'],
-            operation: ['getAll'],
-            returnAll: [false],
-          },
-        },
-        default: 50,
-      },
+      ...ticketOperations,
+      ...ticketFields,
     ],
+  };
+
+  methods = {
+    loadOptions: {
+      getForms,
+      getUsers,
+    },
   };
 
   async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
@@ -197,10 +67,17 @@ export class Qwease implements INodeType {
       try {
         if (resource === 'ticket') {
           if (operation === 'create') {
+            const form = this.getNodeParameter('form', i) as number;
+            const forUser = this.getNodeParameter('forUser', i) as number;
+
+            if (!form || !forUser) {
+              throw new Error('Select a Form and For User (refresh lists if empty).');
+            }
+
             const body = {
               type: this.getNodeParameter('type', i) as string,
-              form: this.getNodeParameter('form', i) as number,
-              for_user: this.getNodeParameter('forUser', i) as number,
+              form,
+              for_user: forUser,
               resume: this.getNodeParameter('resume', i) as string,
               description: this.getNodeParameter('description', i) as string,
             };
@@ -214,7 +91,7 @@ export class Qwease implements INodeType {
             const returnAll = this.getNodeParameter('returnAll', i) as boolean;
             const limit = this.getNodeParameter('limit', i) as number;
             const response = await qweaseApiRequest.call(this, 'GET', '/ticket/');
-            const list = response.results ?? response.data ?? (Array.isArray(response) ? response : []);
+            const list = qweaseListFromResponse(response);
             const sliced = returnAll ? list : list.slice(0, limit);
             for (const entry of sliced) {
               returnData.push({ json: entry, pairedItem: { item: i } });

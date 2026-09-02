@@ -40,13 +40,18 @@ Test calls `GET https://rest.qwease.fr/api/me/`.
 
 API reference: https://rest.qwease.fr/swagger/
 
-## Development
+### Smoke local (npm link)
 
 ```bash
-npm install
 npm run build
-npm run lint
+npm link
+# ~/.n8n/custom → npm link n8n-nodes-qwease
+n8n start
 ```
+
+After code changes: **always** `npm run build` then restart n8n.
+
+**Create ticket:** pick **Type** (INC/REQ) then **Form** and **For User** load from API (dropdowns).
 
 Release (tags trigger npm publish with provenance):
 

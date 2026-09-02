@@ -10,6 +10,8 @@ export class QweaseApi implements ICredentialType {
 
   displayName = 'Qwease API';
 
+  icon = 'file:qwease.svg' as const;
+
   documentationUrl = 'https://rest.qwease.fr/swagger/';
 
   properties: INodeProperties[] = [
