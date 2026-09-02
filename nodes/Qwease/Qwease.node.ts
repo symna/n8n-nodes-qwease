@@ -13,7 +13,7 @@ export class Qwease implements INodeType {
   description: INodeTypeDescription = {
     displayName: 'Qwease',
     name: 'qwease',
-    icon: 'file:qwease.svg',
+    icon: 'file:qwease.png',
     group: ['transform'],
     version: 1,
     subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
