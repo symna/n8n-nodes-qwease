@@ -18,16 +18,30 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
       - name: Install dependencies
+        # Public registry install — do not send NODE_AUTH_TOKEN here
         run: npm install --no-fund --no-audit
+        env:
+          NODE_AUTH_TOKEN: ''
       - name: Release
         run: |
-          if [ -n "$NPM_TOKEN" ]; then
-            npm config set //registry.npmjs.org/:_authToken "$NPM_TOKEN"
-            echo "Using NPM_TOKEN secret"
-          else
-            echo "No NPM_TOKEN — relying on OIDC Trusted Publisher"
+          set -o pipefail
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "::error::NODE_AUTH_TOKEN / NPM_TOKEN secret is empty"
+            exit 1
           fi
-          npm run release
+          echo "Auth token present (length ${#NODE_AUTH_TOKEN})"
+          npm whoami || true
+          npm run release 2>&1 | tee /tmp/release.log
+          status=${PIPESTATUS[0]}
+          if [ "$status" -ne 0 ]; then
+            tail -n 50 /tmp/release.log | while IFS= read -r line; do
+              echo "::error title=release::$line"
+            done
+            exit "$status"
+          fi
         env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: 'true'
