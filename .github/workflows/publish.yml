@@ -17,23 +17,25 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '24'
-          cache: 'npm'
+          # Pin LTS; avoid cache edge-cases on first publishes
+          node-version: '22'
+      - name: Debug workspace
+        run: |
+          ls -la
+          node -v
+          npm -v
+          test -f package-lock.json && echo 'lockfile ok' || echo 'NO LOCKFILE'
+          python3 - <<'PY'
+          import json
+          pkg=json.load(open('package.json'))
+          lock=json.load(open('package-lock.json'))
+          print('pkg', pkg['version'], 'lock', lock.get('version'))
+          print('devDeps', sorted(pkg.get('devDependencies', {})))
+          print('lockDev', sorted(lock.get('packages', {}).get('', {}).get('devDependencies', {})))
+          PY
       - name: Install dependencies
         run: |
-          set -o pipefail
-          npm ci 2>&1 | tee /tmp/npm-ci.log
-          status=${PIPESTATUS[0]}
-          if [ "$status" -ne 0 ]; then
-            echo "::group::npm ci log (tail)"
-            tail -n 80 /tmp/npm-ci.log
-            echo "::endgroup::"
-            # Surface last lines as annotations (visible without login)
-            tail -n 25 /tmp/npm-ci.log | while IFS= read -r line; do
-              echo "::error title=npm ci::$line"
-            done
-            exit "$status"
-          fi
+          npm install --no-fund --no-audit
       - name: Release
         run: |
           [ -n "$NPM_TOKEN" ] && npm config set //registry.npmjs.org/:_authToken "$NPM_TOKEN"
