@@ -45,7 +45,7 @@ export class QweaseTrigger implements INodeType {
   description: INodeTypeDescription = {
     displayName: 'Qwease Trigger',
     name: 'qweaseTrigger',
-    icon: 'file:qwease.svg',
+    icon: 'file:qwease.png',
     group: ['trigger'],
     version: 1,
     description: 'Starts the workflow when Qwease sends a signed webhook event',
