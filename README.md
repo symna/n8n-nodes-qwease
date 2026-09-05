@@ -27,16 +27,19 @@ Create a **Qwease API** credential:
 
 Test calls `GET https://rest.qwease.fr/api/me/`.
 
-## Operations (v0.1)
+## Resources (v0.2)
 
-**Ticket**
+| Resource | Operations |
+|----------|------------|
+| **Ticket** | Create · Get · Get Many · Update · Add Comment |
+| **User** | Create · Get · Get Many · Update |
+| **Organization** | Create · Get · Get Many · Update (`/client/`) |
+| **Device** | Create · Get · Get Many · Update |
+| **Team** | Get · Get Many |
+| **Search** | Advanced Search (`POST /advanced-search/`) · Quick Search (`GET /search/`) |
+| **Me** | Get (token / profile ping) |
 
-| Operation | API |
-|-----------|-----|
-| Create | `POST /ticket/` |
-| Get | `GET /ticket/{id}/` |
-| Get Many | `GET /ticket/` |
-| Update | `PATCH /ticket/{id}/` |
+Related objects use **From list / By ID** resource locators. Create flows show essential fields; optionals live under **Additional Fields**.
 
 API reference: https://rest.qwease.fr/swagger/
 
@@ -50,10 +53,6 @@ n8n start
 ```
 
 After code changes: **always** `npm run build` then restart n8n.
-
-**Create ticket:** pick **Type** (INC/REQ), **Form**, **For User**, plus optional fields (priority, assignment, status, custom fields, etc.).
-
-**Update ticket:** any combination of subject, description, priority, assignment, dates, custom fields.
 
 Release (tags trigger npm publish with provenance):
 

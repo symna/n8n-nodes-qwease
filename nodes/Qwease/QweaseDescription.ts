@@ -32,6 +32,11 @@ export const ticketOperations: INodeProperties[] = [
         value: 'update',
         action: 'Update a ticket',
       },
+      {
+        name: 'Add Comment',
+        value: 'addComment',
+        action: 'Add a comment to a ticket',
+      },
     ],
     default: 'getAll',
   },
@@ -225,7 +230,7 @@ export const ticketFields: INodeProperties[] = [
     displayOptions: {
       show: {
         resource: ['ticket'],
-        operation: ['get', 'update'],
+        operation: ['get', 'update', 'addComment'],
       },
     },
     modes: [
@@ -382,6 +387,33 @@ export const ticketFields: INodeProperties[] = [
       },
       ...optionalTicketFields,
     ],
+  },
+  {
+    displayName: 'Comment',
+    name: 'comment',
+    type: 'string',
+    required: true,
+    typeOptions: { rows: 4 },
+    displayOptions: {
+      show: {
+        resource: ['ticket'],
+        operation: ['addComment'],
+      },
+    },
+    default: '',
+  },
+  {
+    displayName: 'Internal Comment',
+    name: 'commentPrivate',
+    type: 'boolean',
+    displayOptions: {
+      show: {
+        resource: ['ticket'],
+        operation: ['addComment'],
+      },
+    },
+    default: false,
+    description: 'If true, comment is internal (not visible to requester)',
   },
   {
     displayName: 'Return All',

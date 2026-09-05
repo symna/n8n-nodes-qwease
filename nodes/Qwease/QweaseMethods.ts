@@ -209,3 +209,56 @@ export async function getFormCustomFields(
 
   return { results };
 }
+
+export async function getClients(
+  this: ILoadOptionsFunctions,
+  filter?: string,
+): Promise<INodeListSearchResult> {
+  const response = await qweaseApiRequest.call(this, 'GET', '/client/');
+  const clients = qweaseListFromResponse(response);
+
+  const results: INodeListSearchItems[] = [];
+
+  for (const client of clients) {
+    const id = client.id as number;
+    const name =
+      (client.display_name as string) || (client.name as string) || `Organization ${id}`;
+    if (!matchesFilter(name, filter) && !matchesFilter(String(id), filter)) {
+      continue;
+    }
+    results.push({ name, value: String(id) });
+  }
+
+  if (results.length === 0) {
+    return { results: [{ name: 'No organizations found', value: '' }] };
+  }
+
+  return { results };
+}
+
+export async function getDevices(
+  this: ILoadOptionsFunctions,
+  filter?: string,
+): Promise<INodeListSearchResult> {
+  const response = await qweaseApiRequest.call(this, 'GET', '/device/');
+  const devices = qweaseListFromResponse(response);
+
+  const results: INodeListSearchItems[] = [];
+
+  for (const device of devices) {
+    const id = device.id as number;
+    const label = (device.name as string) || `Device ${id}`;
+    const serial = (device.serial_number as string) || '';
+    const name = serial ? `${label} · ${serial}` : label;
+    if (!matchesFilter(name, filter) && !matchesFilter(String(id), filter)) {
+      continue;
+    }
+    results.push({ name, value: String(id) });
+  }
+
+  if (results.length === 0) {
+    return { results: [{ name: 'No devices found', value: '' }] };
+  }
+
+  return { results };
+}
