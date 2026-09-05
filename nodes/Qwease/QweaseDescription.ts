@@ -37,11 +37,22 @@ export const ticketOperations: INodeProperties[] = [
   },
 ];
 
+const idModeValidation = [
+  {
+    type: 'regex' as const,
+    properties: {
+      regex: '^[0-9]+$',
+      errorMessage: 'ID must be a positive integer',
+    },
+  },
+];
+
 export const ticketFields: INodeProperties[] = [
   {
-    displayName: 'Ticket ID',
+    displayName: 'Ticket',
     name: 'ticketId',
-    type: 'string',
+    type: 'resourceLocator',
+    default: { mode: 'list', value: '' },
     required: true,
     displayOptions: {
       show: {
@@ -49,7 +60,25 @@ export const ticketFields: INodeProperties[] = [
         operation: ['get', 'update'],
       },
     },
-    default: '',
+    modes: [
+      {
+        displayName: 'From List',
+        name: 'list',
+        type: 'list',
+        placeholder: 'Select a ticket...',
+        typeOptions: {
+          searchListMethod: 'getTickets',
+          searchable: true,
+        },
+      },
+      {
+        displayName: 'By ID',
+        name: 'id',
+        type: 'string',
+        placeholder: '123',
+        validation: idModeValidation,
+      },
+    ],
   },
   {
     displayName: 'Type',
@@ -71,7 +100,8 @@ export const ticketFields: INodeProperties[] = [
   {
     displayName: 'Form',
     name: 'form',
-    type: 'options',
+    type: 'resourceLocator',
+    default: { mode: 'list', value: '' },
     required: true,
     displayOptions: {
       show: {
@@ -79,17 +109,32 @@ export const ticketFields: INodeProperties[] = [
         operation: ['create'],
       },
     },
-    typeOptions: {
-      loadOptionsMethod: 'getForms',
-      loadOptionsDependsOn: ['type'],
-    },
-    default: '',
-    description: 'Ticket form from your Qwease tenant (loaded from API)',
+    description: 'Ticket form from your Qwease tenant',
+    modes: [
+      {
+        displayName: 'From List',
+        name: 'list',
+        type: 'list',
+        placeholder: 'Select a form...',
+        typeOptions: {
+          searchListMethod: 'getForms',
+          searchable: true,
+        },
+      },
+      {
+        displayName: 'By ID',
+        name: 'id',
+        type: 'string',
+        placeholder: '1',
+        validation: idModeValidation,
+      },
+    ],
   },
   {
     displayName: 'For User',
     name: 'forUser',
-    type: 'options',
+    type: 'resourceLocator',
+    default: { mode: 'list', value: '' },
     required: true,
     displayOptions: {
       show: {
@@ -97,11 +142,26 @@ export const ticketFields: INodeProperties[] = [
         operation: ['create'],
       },
     },
-    typeOptions: {
-      loadOptionsMethod: 'getUsers',
-    },
-    default: '',
-    description: 'Requester user in Qwease',
+    description: 'Impacted / requester user in Qwease',
+    modes: [
+      {
+        displayName: 'From List',
+        name: 'list',
+        type: 'list',
+        placeholder: 'Select a user...',
+        typeOptions: {
+          searchListMethod: 'getUsers',
+          searchable: true,
+        },
+      },
+      {
+        displayName: 'By ID',
+        name: 'id',
+        type: 'string',
+        placeholder: '1',
+        validation: idModeValidation,
+      },
+    ],
   },
   {
     displayName: 'Subject',
@@ -178,50 +238,98 @@ export const ticketFields: INodeProperties[] = [
   {
     displayName: 'Requested By',
     name: 'askedBy',
-    type: 'options',
+    type: 'resourceLocator',
+    default: { mode: 'list', value: '' },
     displayOptions: {
       show: {
         resource: ['ticket'],
         operation: ['create', 'update'],
       },
     },
-    typeOptions: {
-      loadOptionsMethod: 'getUsers',
-    },
-    default: '',
     description: 'User who requested the ticket (asked_by)',
+    modes: [
+      {
+        displayName: 'From List',
+        name: 'list',
+        type: 'list',
+        placeholder: 'Select a user...',
+        typeOptions: {
+          searchListMethod: 'getUsers',
+          searchable: true,
+        },
+      },
+      {
+        displayName: 'By ID',
+        name: 'id',
+        type: 'string',
+        placeholder: '1',
+        validation: idModeValidation,
+      },
+    ],
   },
   {
     displayName: 'Assigned To',
     name: 'assignedTo',
-    type: 'options',
+    type: 'resourceLocator',
+    default: { mode: 'list', value: '' },
     displayOptions: {
       show: {
         resource: ['ticket'],
         operation: ['create', 'update'],
       },
     },
-    typeOptions: {
-      loadOptionsMethod: 'getUsers',
-    },
-    default: '',
     description: 'Agent responsible for the ticket',
+    modes: [
+      {
+        displayName: 'From List',
+        name: 'list',
+        type: 'list',
+        placeholder: 'Select a user...',
+        typeOptions: {
+          searchListMethod: 'getUsers',
+          searchable: true,
+        },
+      },
+      {
+        displayName: 'By ID',
+        name: 'id',
+        type: 'string',
+        placeholder: '1',
+        validation: idModeValidation,
+      },
+    ],
   },
   {
     displayName: 'Assigned Group',
     name: 'assignedGroup',
-    type: 'options',
+    type: 'resourceLocator',
+    default: { mode: 'list', value: '' },
     displayOptions: {
       show: {
         resource: ['ticket'],
         operation: ['create', 'update'],
       },
     },
-    typeOptions: {
-      loadOptionsMethod: 'getTeams',
-    },
-    default: '',
     description: 'Support team assigned to the ticket',
+    modes: [
+      {
+        displayName: 'From List',
+        name: 'list',
+        type: 'list',
+        placeholder: 'Select a team...',
+        typeOptions: {
+          searchListMethod: 'getTeams',
+          searchable: true,
+        },
+      },
+      {
+        displayName: 'By ID',
+        name: 'id',
+        type: 'string',
+        placeholder: '1',
+        validation: idModeValidation,
+      },
+    ],
   },
   {
     displayName: 'Status ID',

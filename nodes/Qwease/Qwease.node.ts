@@ -6,8 +6,8 @@ import type {
 } from 'n8n-workflow';
 
 import { qweaseApiRequest, qweaseListFromResponse } from './GenericFunctions';
-import { buildTicketBodyFromParameters } from './TicketBody';
-import { getForms, getTeams, getUsers } from './QweaseMethods';
+import { buildTicketBodyFromParameters, getTicketIdParameter } from './TicketBody';
+import { getForms, getTeams, getTickets, getUsers } from './QweaseMethods';
 import { ticketFields, ticketOperations } from './QweaseDescription';
 
 export class Qwease implements INodeType {
@@ -51,10 +51,11 @@ export class Qwease implements INodeType {
   };
 
   methods = {
-    loadOptions: {
+    listSearch: {
       getForms,
       getUsers,
       getTeams,
+      getTickets,
     },
   };
 
@@ -69,18 +70,11 @@ export class Qwease implements INodeType {
       try {
         if (resource === 'ticket') {
           if (operation === 'create') {
-            const form = this.getNodeParameter('form', i) as number;
-            const forUser = this.getNodeParameter('forUser', i) as number;
-
-            if (!form || !forUser) {
-              throw new Error('Select a Form and For User (refresh lists if empty).');
-            }
-
             const body = buildTicketBodyFromParameters.call(this, i, true);
             const response = await qweaseApiRequest.call(this, 'POST', '/ticket/', body);
             returnData.push({ json: response, pairedItem: { item: i } });
           } else if (operation === 'get') {
-            const ticketId = this.getNodeParameter('ticketId', i) as string;
+            const ticketId = getTicketIdParameter.call(this, i);
             const response = await qweaseApiRequest.call(this, 'GET', `/ticket/${ticketId}/`);
             returnData.push({ json: response, pairedItem: { item: i } });
           } else if (operation === 'getAll') {
@@ -93,7 +87,7 @@ export class Qwease implements INodeType {
               returnData.push({ json: entry, pairedItem: { item: i } });
             }
           } else if (operation === 'update') {
-            const ticketId = this.getNodeParameter('ticketId', i) as string;
+            const ticketId = getTicketIdParameter.call(this, i);
             const body = buildTicketBodyFromParameters.call(this, i, false);
             if (Object.keys(body).length === 0) {
               throw new Error('Set at least one field to update.');

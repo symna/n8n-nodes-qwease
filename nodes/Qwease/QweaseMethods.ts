@@ -1,11 +1,22 @@
 import type {
   ILoadOptionsFunctions,
-  INodePropertyOptions,
+  INodeListSearchItems,
+  INodeListSearchResult,
 } from 'n8n-workflow';
 
 import { qweaseApiRequest, qweaseListFromResponse } from './GenericFunctions';
 
-export async function getForms(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+function matchesFilter(label: string, filter?: string): boolean {
+  if (!filter) {
+    return true;
+  }
+  return label.toLowerCase().includes(filter.toLowerCase());
+}
+
+export async function getForms(
+  this: ILoadOptionsFunctions,
+  filter?: string,
+): Promise<INodeListSearchResult> {
   const ticketType = this.getCurrentNodeParameter('type') as string | undefined;
   const response = await qweaseApiRequest.call(this, 'GET', '/forms/');
   const forms = qweaseListFromResponse(response);
@@ -14,54 +25,108 @@ export async function getForms(this: ILoadOptionsFunctions): Promise<INodeProper
     ? forms.filter((form) => (form.form_type as string) === ticketType)
     : forms;
 
-  if (filtered.length === 0) {
-    return [
-      {
-        name: 'No forms found — check type or API access',
-        value: '',
-      },
-    ];
-  }
+  const results: INodeListSearchItems[] = [];
 
-  return filtered.map((form) => {
+  for (const form of filtered) {
     const id = form.id as number;
     const label = (form.name as string) || (form.title as string) || `Form ${id}`;
     const kind = (form.form_type as string) || ticketType || '';
+    const name = kind ? `${label} (${kind})` : label;
+    if (!matchesFilter(name, filter)) {
+      continue;
+    }
+    results.push({ name, value: String(id) });
+  }
+
+  if (results.length === 0) {
     return {
-      name: kind ? `${label} (${kind})` : label,
-      value: id,
+      results: [
+        {
+          name: 'No forms found — check type or API access',
+          value: '',
+        },
+      ],
     };
-  });
+  }
+
+  return { results };
 }
 
-export async function getUsers(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+export async function getUsers(
+  this: ILoadOptionsFunctions,
+  filter?: string,
+): Promise<INodeListSearchResult> {
   const response = await qweaseApiRequest.call(this, 'GET', '/users/');
   const users = qweaseListFromResponse(response);
 
-  if (users.length === 0) {
-    return [{ name: 'No users found', value: '' }];
-  }
+  const results: INodeListSearchItems[] = [];
 
-  return users.map((user) => {
+  for (const user of users) {
     const id = user.id as number;
     const email = (user.email as string) || '';
-    const name = [user.first_name, user.last_name].filter(Boolean).join(' ').trim();
-    const label = name && email ? `${name} · ${email}` : email || name || `User ${id}`;
-    return { name: label, value: id };
-  });
+    const fullName = [user.first_name, user.last_name].filter(Boolean).join(' ').trim();
+    const name = fullName && email ? `${fullName} · ${email}` : email || fullName || `User ${id}`;
+    if (!matchesFilter(name, filter)) {
+      continue;
+    }
+    results.push({ name, value: String(id) });
+  }
+
+  if (results.length === 0) {
+    return { results: [{ name: 'No users found', value: '' }] };
+  }
+
+  return { results };
 }
 
-export async function getTeams(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+export async function getTeams(
+  this: ILoadOptionsFunctions,
+  filter?: string,
+): Promise<INodeListSearchResult> {
   const response = await qweaseApiRequest.call(this, 'GET', '/teams/');
   const teams = qweaseListFromResponse(response);
 
-  if (teams.length === 0) {
-    return [{ name: 'No teams found', value: '' }];
+  const results: INodeListSearchItems[] = [];
+
+  for (const team of teams) {
+    const id = team.id as number;
+    const name = (team.display_name as string) || (team.name as string) || `Team ${id}`;
+    if (!matchesFilter(name, filter)) {
+      continue;
+    }
+    results.push({ name, value: String(id) });
   }
 
-  return teams.map((team) => {
-    const id = team.id as number;
-    const label = (team.display_name as string) || (team.name as string) || `Team ${id}`;
-    return { name: label, value: id };
-  });
+  if (results.length === 0) {
+    return { results: [{ name: 'No teams found', value: '' }] };
+  }
+
+  return { results };
+}
+
+export async function getTickets(
+  this: ILoadOptionsFunctions,
+  filter?: string,
+): Promise<INodeListSearchResult> {
+  const response = await qweaseApiRequest.call(this, 'GET', '/ticket/');
+  const tickets = qweaseListFromResponse(response);
+
+  const results: INodeListSearchItems[] = [];
+
+  for (const ticket of tickets) {
+    const id = ticket.id as number;
+    const resume = (ticket.resume as string) || '';
+    const displayName = (ticket.display_name as string) || '';
+    const name = displayName || (resume ? `#${id} · ${resume}` : `Ticket ${id}`);
+    if (!matchesFilter(name, filter) && !matchesFilter(String(id), filter)) {
+      continue;
+    }
+    results.push({ name, value: String(id) });
+  }
+
+  if (results.length === 0) {
+    return { results: [{ name: 'No tickets found', value: '' }] };
+  }
+
+  return { results };
 }
