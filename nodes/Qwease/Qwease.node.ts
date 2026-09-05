@@ -9,15 +9,21 @@ import { qweaseApiRequest, qweaseListFromResponse } from './GenericFunctions';
 import { buildTicketBodyFromParameters, getTicketIdParameter } from './TicketBody';
 import {
   getClients,
+  getClientsLoad,
   getDevices,
+  getDevicesLoad,
   getFormCustomFields,
   getFormStatuses,
   getForms,
   getPages,
+  getPagesLoad,
   getTasks,
   getTeams,
+  getTeamsLoad,
   getTickets,
+  getTicketsLoad,
   getUsers,
+  getUsersLoad,
 } from './QweaseMethods';
 import { ticketFields, ticketOperations } from './QweaseDescription';
 import {
@@ -122,6 +128,14 @@ export class Qwease implements INodeType {
       getTasks,
       getFormStatuses,
       getFormCustomFields,
+    },
+    loadOptions: {
+      getUsersLoad,
+      getClientsLoad,
+      getTeamsLoad,
+      getDevicesLoad,
+      getTicketsLoad,
+      getPagesLoad,
     },
   };
 

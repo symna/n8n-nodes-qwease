@@ -2,6 +2,7 @@ import type { INodeProperties } from 'n8n-workflow';
 
 import {
   customFieldsFixedCollection,
+  multiOptionsFromLoad,
   resourceLocatorModes,
   returnAllLimitFields,
 } from './shared';
@@ -322,27 +323,24 @@ export const teamFields: INodeProperties[] = [
     default: {},
     displayOptions: { show: { resource: ['team'], operation: ['create'] } },
     options: [
-      {
-        displayName: 'Organization IDs',
-        name: 'clientIds',
-        type: 'string',
-        default: '',
-        description: 'Comma-separated organization IDs',
-      },
-      {
-        displayName: 'Member IDs',
-        name: 'memberIds',
-        type: 'string',
-        default: '',
-        description: 'Comma-separated user IDs',
-      },
-      {
-        displayName: 'Administrator IDs',
-        name: 'administratorIds',
-        type: 'string',
-        default: '',
-        description: 'Comma-separated user IDs',
-      },
+      multiOptionsFromLoad(
+        'Organizations',
+        'clients',
+        'getClientsLoad',
+        'Organizations (clients) linked to this team',
+      ),
+      multiOptionsFromLoad(
+        'Members',
+        'members',
+        'getUsersLoad',
+        'Team members — pick one or more users',
+      ),
+      multiOptionsFromLoad(
+        'Administrators',
+        'administrators',
+        'getUsersLoad',
+        'Team administrators — pick one or more users',
+      ),
     ],
   },
   {
@@ -354,27 +352,24 @@ export const teamFields: INodeProperties[] = [
     displayOptions: { show: { resource: ['team'], operation: ['update'] } },
     options: [
       { displayName: 'Name', name: 'name', type: 'string', default: '' },
-      {
-        displayName: 'Organization IDs',
-        name: 'clientIds',
-        type: 'string',
-        default: '',
-        description: 'Comma-separated organization IDs',
-      },
-      {
-        displayName: 'Member IDs',
-        name: 'memberIds',
-        type: 'string',
-        default: '',
-        description: 'Comma-separated user IDs',
-      },
-      {
-        displayName: 'Administrator IDs',
-        name: 'administratorIds',
-        type: 'string',
-        default: '',
-        description: 'Comma-separated user IDs',
-      },
+      multiOptionsFromLoad(
+        'Organizations',
+        'clients',
+        'getClientsLoad',
+        'Organizations (clients) linked to this team',
+      ),
+      multiOptionsFromLoad(
+        'Members',
+        'members',
+        'getUsersLoad',
+        'Team members — pick one or more users',
+      ),
+      multiOptionsFromLoad(
+        'Administrators',
+        'administrators',
+        'getUsersLoad',
+        'Team administrators — pick one or more users',
+      ),
     ],
   },
   ...returnAllLimitFields('team'),

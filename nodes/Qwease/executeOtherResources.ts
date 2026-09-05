@@ -212,9 +212,9 @@ export async function executeTeam(
       name: this.getNodeParameter('name', itemIndex) as string,
     };
     const additional = this.getNodeParameter('additionalFields', itemIndex, {}) as IDataObject;
-    const clients = parseIdList(additional.clientIds);
-    const members = parseIdList(additional.memberIds);
-    const admins = parseIdList(additional.administratorIds);
+    const clients = parseMultiIds(additional.clients);
+    const members = parseMultiIds(additional.members);
+    const admins = parseMultiIds(additional.administrators);
     if (clients) body.client = clients;
     if (members) body.members = members;
     if (admins) body.administrators = admins;
@@ -226,9 +226,9 @@ export async function executeTeam(
     const fields = this.getNodeParameter('updateFields', itemIndex, {}) as IDataObject;
     const body: IDataObject = {};
     if (fields.name) body.name = fields.name;
-    const clients = parseIdList(fields.clientIds);
-    const members = parseIdList(fields.memberIds);
-    const admins = parseIdList(fields.administratorIds);
+    const clients = parseMultiIds(fields.clients);
+    const members = parseMultiIds(fields.members);
+    const admins = parseMultiIds(fields.administrators);
     if (clients) body.client = clients;
     if (members) body.members = members;
     if (admins) body.administrators = admins;
@@ -241,13 +241,13 @@ export async function executeTeam(
   throw new Error(`Unknown team operation: ${operation}`);
 }
 
-function parseIdList(value: unknown): number[] | undefined {
+function parseMultiIds(value: unknown): number[] | undefined {
   if (value === undefined || value === null || value === '') {
     return undefined;
   }
-  const ids = String(value)
-    .split(',')
-    .map((part) => parseInt(part.trim(), 10))
+  const raw = Array.isArray(value) ? value : String(value).split(',');
+  const ids = raw
+    .map((part) => parseInt(String(part).trim(), 10))
     .filter((n) => !Number.isNaN(n));
   return ids.length ? ids : undefined;
 }

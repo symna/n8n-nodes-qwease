@@ -65,6 +65,24 @@ export const returnAllLimitFields = (resource: string): INodeProperties[] => [
   },
 ];
 
+export function multiOptionsFromLoad(
+  displayName: string,
+  name: string,
+  loadOptionsMethod: string,
+  description?: string,
+): INodeProperties {
+  return {
+    displayName,
+    name,
+    type: 'multiOptions',
+    typeOptions: {
+      loadOptionsMethod,
+    },
+    default: [],
+    description,
+  };
+}
+
 export const customFieldsFixedCollection: INodeProperties = {
   displayName: 'Custom Fields',
   name: 'customFieldsUi',

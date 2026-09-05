@@ -2,6 +2,7 @@ import type {
   ILoadOptionsFunctions,
   INodeListSearchItems,
   INodeListSearchResult,
+  INodePropertyOptions,
 } from 'n8n-workflow';
 
 import { qweaseApiRequest, qweaseListFromResponse } from './GenericFunctions';
@@ -315,4 +316,42 @@ export async function getTasks(
   }
 
   return { results };
+}
+
+async function toLoadOptions(
+  this: ILoadOptionsFunctions,
+  searchFn: (
+    this: ILoadOptionsFunctions,
+    filter?: string,
+  ) => Promise<INodeListSearchResult>,
+): Promise<INodePropertyOptions[]> {
+  const { results } = await searchFn.call(this);
+  return results
+    .filter((entry) => entry.value !== '')
+    .map((entry) => ({ name: entry.name, value: entry.value }));
+}
+
+/** multiOptions loaders (pick several related objects) */
+export async function getUsersLoad(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+  return toLoadOptions.call(this, getUsers);
+}
+
+export async function getClientsLoad(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+  return toLoadOptions.call(this, getClients);
+}
+
+export async function getTeamsLoad(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+  return toLoadOptions.call(this, getTeams);
+}
+
+export async function getDevicesLoad(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+  return toLoadOptions.call(this, getDevices);
+}
+
+export async function getTicketsLoad(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+  return toLoadOptions.call(this, getTickets);
+}
+
+export async function getPagesLoad(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+  return toLoadOptions.call(this, getPages);
 }
