@@ -4,6 +4,18 @@ type CustomFieldsUi = {
   field?: Array<{ key: string; value: string }>;
 };
 
+type TicketOptionalFields = IDataObject & {
+  priority?: string;
+  askedBy?: unknown;
+  assignedTo?: unknown;
+  assignedGroup?: unknown;
+  statusId?: unknown;
+  desiredResolutionDate?: string;
+  customFieldsUi?: CustomFieldsUi;
+  resume?: string;
+  description?: string;
+};
+
 function parseOptionalInt(value: unknown): number | undefined {
   if (value === undefined || value === null || value === '') {
     return undefined;
@@ -30,6 +42,10 @@ function getResourceId(
   return String(value);
 }
 
+function resolveLocatorValue(value: unknown): number | undefined {
+  return parseOptionalInt(value);
+}
+
 function buildCustomFieldsFromUi(customFieldsUi: CustomFieldsUi | undefined): IDataObject | undefined {
   const fields = customFieldsUi?.field;
   if (!fields?.length) {
@@ -43,6 +59,47 @@ function buildCustomFieldsFromUi(customFieldsUi: CustomFieldsUi | undefined): ID
     }
   }
   return Object.keys(result).length ? result : undefined;
+}
+
+function applyOptionalFields(body: IDataObject, fields: TicketOptionalFields): void {
+  if (fields.resume) {
+    body.resume = fields.resume;
+  }
+  if (fields.description) {
+    body.description = fields.description;
+  }
+  if (fields.priority) {
+    body.priority = fields.priority;
+  }
+
+  const askedBy = resolveLocatorValue(fields.askedBy);
+  if (askedBy !== undefined) {
+    body.asked_by = askedBy;
+  }
+
+  const assignedTo = resolveLocatorValue(fields.assignedTo);
+  if (assignedTo !== undefined) {
+    body.assigned_to = assignedTo;
+  }
+
+  const assignedGroup = resolveLocatorValue(fields.assignedGroup);
+  if (assignedGroup !== undefined) {
+    body.assigned_group = assignedGroup;
+  }
+
+  const statut = parseOptionalInt(fields.statusId);
+  if (statut !== undefined) {
+    body.statut = statut;
+  }
+
+  if (fields.desiredResolutionDate) {
+    body.desired_resolution_date = fields.desiredResolutionDate;
+  }
+
+  const customFields = buildCustomFieldsFromUi(fields.customFieldsUi);
+  if (customFields) {
+    body.custom_fields = customFields;
+  }
 }
 
 export function buildTicketBodyFromParameters(
@@ -63,56 +120,20 @@ export function buildTicketBodyFromParameters(
     body.for_user = forUser;
     body.resume = this.getNodeParameter('resume', itemIndex) as string;
     body.description = this.getNodeParameter('description', itemIndex) as string;
+
+    const additionalFields = this.getNodeParameter(
+      'additionalFields',
+      itemIndex,
+      {},
+    ) as TicketOptionalFields;
+    applyOptionalFields(body, additionalFields);
   } else {
-    const resume = this.getNodeParameter('resume', itemIndex, '') as string;
-    if (resume) {
-      body.resume = resume;
-    }
-    const description = this.getNodeParameter('description', itemIndex, '') as string;
-    if (description) {
-      body.description = description;
-    }
-  }
-
-  const priority = this.getNodeParameter('priority', itemIndex, '') as string;
-  if (priority) {
-    body.priority = priority;
-  }
-
-  const askedBy = parseOptionalInt(getResourceId(this, 'askedBy', itemIndex));
-  if (askedBy !== undefined) {
-    body.asked_by = askedBy;
-  }
-
-  const assignedTo = parseOptionalInt(getResourceId(this, 'assignedTo', itemIndex));
-  if (assignedTo !== undefined) {
-    body.assigned_to = assignedTo;
-  }
-
-  const assignedGroup = parseOptionalInt(getResourceId(this, 'assignedGroup', itemIndex));
-  if (assignedGroup !== undefined) {
-    body.assigned_group = assignedGroup;
-  }
-
-  const statut = parseOptionalInt(this.getNodeParameter('statusId', itemIndex, ''));
-  if (statut !== undefined) {
-    body.statut = statut;
-  }
-
-  const desiredResolutionDate = this.getNodeParameter(
-    'desiredResolutionDate',
-    itemIndex,
-    '',
-  ) as string;
-  if (desiredResolutionDate) {
-    body.desired_resolution_date = desiredResolutionDate;
-  }
-
-  const customFields = buildCustomFieldsFromUi(
-    this.getNodeParameter('customFieldsUi', itemIndex, {}) as CustomFieldsUi,
-  );
-  if (customFields) {
-    body.custom_fields = customFields;
+    const updateFields = this.getNodeParameter(
+      'updateFields',
+      itemIndex,
+      {},
+    ) as TicketOptionalFields;
+    applyOptionalFields(body, updateFields);
   }
 
   return body;

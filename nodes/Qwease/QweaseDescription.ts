@@ -47,6 +47,136 @@ const idModeValidation = [
   },
 ];
 
+const userResourceLocatorModes: INodeProperties['modes'] = [
+  {
+    displayName: 'From List',
+    name: 'list',
+    type: 'list',
+    placeholder: 'Select a user...',
+    typeOptions: {
+      searchListMethod: 'getUsers',
+      searchable: true,
+    },
+  },
+  {
+    displayName: 'By ID',
+    name: 'id',
+    type: 'string',
+    placeholder: '1',
+    validation: idModeValidation,
+  },
+];
+
+const teamResourceLocatorModes: INodeProperties['modes'] = [
+  {
+    displayName: 'From List',
+    name: 'list',
+    type: 'list',
+    placeholder: 'Select a team...',
+    typeOptions: {
+      searchListMethod: 'getTeams',
+      searchable: true,
+    },
+  },
+  {
+    displayName: 'By ID',
+    name: 'id',
+    type: 'string',
+    placeholder: '1',
+    validation: idModeValidation,
+  },
+];
+
+const priorityOptions = [
+  { name: 'Very High', value: 'very_high' },
+  { name: 'High', value: 'high' },
+  { name: 'Medium', value: 'medium' },
+  { name: 'Low', value: 'low' },
+  { name: 'Very Low', value: 'very_low' },
+];
+
+const customFieldsProperty: INodeProperties = {
+  displayName: 'Custom Fields',
+  name: 'customFieldsUi',
+  type: 'fixedCollection',
+  typeOptions: {
+    multipleValues: true,
+  },
+  default: {},
+  placeholder: 'Add Custom Field',
+  description:
+    'Keys = technical_name from Qwease (e.g. Customfield1). List fields = option ID as value.',
+  options: [
+    {
+      displayName: 'Field',
+      name: 'field',
+      values: [
+        {
+          displayName: 'Technical Name',
+          name: 'key',
+          type: 'string',
+          default: '',
+        },
+        {
+          displayName: 'Value',
+          name: 'value',
+          type: 'string',
+          default: '',
+        },
+      ],
+    },
+  ],
+};
+
+const optionalTicketFields: INodeProperties[] = [
+  {
+    displayName: 'Priority',
+    name: 'priority',
+    type: 'options',
+    options: priorityOptions,
+    default: '',
+    description: 'Ticket priority',
+  },
+  {
+    displayName: 'Requested By',
+    name: 'askedBy',
+    type: 'resourceLocator',
+    default: { mode: 'list', value: '' },
+    description: 'User who requested the ticket (asked_by)',
+    modes: userResourceLocatorModes,
+  },
+  {
+    displayName: 'Assigned To',
+    name: 'assignedTo',
+    type: 'resourceLocator',
+    default: { mode: 'list', value: '' },
+    description: 'Agent responsible for the ticket',
+    modes: userResourceLocatorModes,
+  },
+  {
+    displayName: 'Assigned Group',
+    name: 'assignedGroup',
+    type: 'resourceLocator',
+    default: { mode: 'list', value: '' },
+    description: 'Support team assigned to the ticket',
+    modes: teamResourceLocatorModes,
+  },
+  {
+    displayName: 'Status ID',
+    name: 'statusId',
+    type: 'number',
+    default: '',
+    description: 'Status item ID (statut) from your Qwease tenant',
+  },
+  {
+    displayName: 'Desired Resolution Date',
+    name: 'desiredResolutionDate',
+    type: 'dateTime',
+    default: '',
+  },
+  customFieldsProperty,
+];
+
 export const ticketFields: INodeProperties[] = [
   {
     displayName: 'Ticket',
@@ -143,25 +273,7 @@ export const ticketFields: INodeProperties[] = [
       },
     },
     description: 'Impacted / requester user in Qwease',
-    modes: [
-      {
-        displayName: 'From List',
-        name: 'list',
-        type: 'list',
-        placeholder: 'Select a user...',
-        typeOptions: {
-          searchListMethod: 'getUsers',
-          searchable: true,
-        },
-      },
-      {
-        displayName: 'By ID',
-        name: 'id',
-        type: 'string',
-        placeholder: '1',
-        validation: idModeValidation,
-      },
-    ],
+    modes: userResourceLocatorModes,
   },
   {
     displayName: 'Subject',
@@ -172,18 +284,6 @@ export const ticketFields: INodeProperties[] = [
       show: {
         resource: ['ticket'],
         operation: ['create'],
-      },
-    },
-    default: '',
-  },
-  {
-    displayName: 'Subject',
-    name: 'resume',
-    type: 'string',
-    displayOptions: {
-      show: {
-        resource: ['ticket'],
-        operation: ['update'],
       },
     },
     default: '',
@@ -203,195 +303,46 @@ export const ticketFields: INodeProperties[] = [
     default: '',
   },
   {
-    displayName: 'Description',
-    name: 'description',
-    type: 'string',
-    typeOptions: { rows: 4 },
-    displayOptions: {
-      show: {
-        resource: ['ticket'],
-        operation: ['update'],
-      },
-    },
-    default: '',
-  },
-  {
-    displayName: 'Priority',
-    name: 'priority',
-    type: 'options',
-    options: [
-      { name: 'Very High', value: 'very_high' },
-      { name: 'High', value: 'high' },
-      { name: 'Medium', value: 'medium' },
-      { name: 'Low', value: 'low' },
-      { name: 'Very Low', value: 'very_low' },
-    ],
-    displayOptions: {
-      show: {
-        resource: ['ticket'],
-        operation: ['create', 'update'],
-      },
-    },
-    default: '',
-    description: 'Ticket priority',
-  },
-  {
-    displayName: 'Requested By',
-    name: 'askedBy',
-    type: 'resourceLocator',
-    default: { mode: 'list', value: '' },
-    displayOptions: {
-      show: {
-        resource: ['ticket'],
-        operation: ['create', 'update'],
-      },
-    },
-    description: 'User who requested the ticket (asked_by)',
-    modes: [
-      {
-        displayName: 'From List',
-        name: 'list',
-        type: 'list',
-        placeholder: 'Select a user...',
-        typeOptions: {
-          searchListMethod: 'getUsers',
-          searchable: true,
-        },
-      },
-      {
-        displayName: 'By ID',
-        name: 'id',
-        type: 'string',
-        placeholder: '1',
-        validation: idModeValidation,
-      },
-    ],
-  },
-  {
-    displayName: 'Assigned To',
-    name: 'assignedTo',
-    type: 'resourceLocator',
-    default: { mode: 'list', value: '' },
-    displayOptions: {
-      show: {
-        resource: ['ticket'],
-        operation: ['create', 'update'],
-      },
-    },
-    description: 'Agent responsible for the ticket',
-    modes: [
-      {
-        displayName: 'From List',
-        name: 'list',
-        type: 'list',
-        placeholder: 'Select a user...',
-        typeOptions: {
-          searchListMethod: 'getUsers',
-          searchable: true,
-        },
-      },
-      {
-        displayName: 'By ID',
-        name: 'id',
-        type: 'string',
-        placeholder: '1',
-        validation: idModeValidation,
-      },
-    ],
-  },
-  {
-    displayName: 'Assigned Group',
-    name: 'assignedGroup',
-    type: 'resourceLocator',
-    default: { mode: 'list', value: '' },
-    displayOptions: {
-      show: {
-        resource: ['ticket'],
-        operation: ['create', 'update'],
-      },
-    },
-    description: 'Support team assigned to the ticket',
-    modes: [
-      {
-        displayName: 'From List',
-        name: 'list',
-        type: 'list',
-        placeholder: 'Select a team...',
-        typeOptions: {
-          searchListMethod: 'getTeams',
-          searchable: true,
-        },
-      },
-      {
-        displayName: 'By ID',
-        name: 'id',
-        type: 'string',
-        placeholder: '1',
-        validation: idModeValidation,
-      },
-    ],
-  },
-  {
-    displayName: 'Status ID',
-    name: 'statusId',
-    type: 'number',
-    displayOptions: {
-      show: {
-        resource: ['ticket'],
-        operation: ['create', 'update'],
-      },
-    },
-    default: '',
-    description: 'Status item ID (statut) from your Qwease tenant',
-  },
-  {
-    displayName: 'Desired Resolution Date',
-    name: 'desiredResolutionDate',
-    type: 'dateTime',
-    displayOptions: {
-      show: {
-        resource: ['ticket'],
-        operation: ['create', 'update'],
-      },
-    },
-    default: '',
-  },
-  {
-    displayName: 'Custom Fields',
-    name: 'customFieldsUi',
-    type: 'fixedCollection',
-    typeOptions: {
-      multipleValues: true,
-    },
-    displayOptions: {
-      show: {
-        resource: ['ticket'],
-        operation: ['create', 'update'],
-      },
-    },
+    displayName: 'Additional Fields',
+    name: 'additionalFields',
+    type: 'collection',
+    placeholder: 'Add Field',
     default: {},
-    placeholder: 'Add Custom Field',
-    description:
-      'Keys = technical_name from Qwease (e.g. Customfield1). List fields = option ID as value.',
+    displayOptions: {
+      show: {
+        resource: ['ticket'],
+        operation: ['create'],
+      },
+    },
+    options: optionalTicketFields,
+  },
+  {
+    displayName: 'Update Fields',
+    name: 'updateFields',
+    type: 'collection',
+    placeholder: 'Add Field',
+    default: {},
+    displayOptions: {
+      show: {
+        resource: ['ticket'],
+        operation: ['update'],
+      },
+    },
     options: [
       {
-        displayName: 'Field',
-        name: 'field',
-        values: [
-          {
-            displayName: 'Technical Name',
-            name: 'key',
-            type: 'string',
-            default: '',
-          },
-          {
-            displayName: 'Value',
-            name: 'value',
-            type: 'string',
-            default: '',
-          },
-        ],
+        displayName: 'Subject',
+        name: 'resume',
+        type: 'string',
+        default: '',
       },
+      {
+        displayName: 'Description',
+        name: 'description',
+        type: 'string',
+        typeOptions: { rows: 4 },
+        default: '',
+      },
+      ...optionalTicketFields,
     ],
   },
   {
