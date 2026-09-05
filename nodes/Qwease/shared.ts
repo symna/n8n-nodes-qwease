@@ -83,33 +83,60 @@ export function multiOptionsFromLoad(
   };
 }
 
-export const customFieldsFixedCollection: INodeProperties = {
-  displayName: 'Custom Fields',
-  name: 'customFieldsUi',
-  type: 'fixedCollection',
-  typeOptions: {
-    multipleValues: true,
-  },
-  default: {},
-  placeholder: 'Add Custom Field',
-  options: [
-    {
-      displayName: 'Field',
-      name: 'field',
-      values: [
-        {
-          displayName: 'Technical Name',
-          name: 'key',
-          type: 'string',
-          default: '',
-        },
-        {
-          displayName: 'Value',
-          name: 'value',
-          type: 'string',
-          default: '',
-        },
-      ],
+/** Custom fields with From list / By Name (listSearch method varies by scope) */
+export function customFieldsFixedCollectionWithList(
+  searchListMethod: string,
+  description = 'Pick a field from your Qwease tenant (or enter technical_name)',
+): INodeProperties {
+  return {
+    displayName: 'Custom Fields',
+    name: 'customFieldsUi',
+    type: 'fixedCollection',
+    typeOptions: {
+      multipleValues: true,
     },
-  ],
-};
+    default: {},
+    placeholder: 'Add Custom Field',
+    description,
+    options: [
+      {
+        displayName: 'Field',
+        name: 'field',
+        values: [
+          {
+            displayName: 'Field',
+            name: 'key',
+            type: 'resourceLocator',
+            default: { mode: 'list', value: '' },
+            modes: [
+              {
+                displayName: 'From List',
+                name: 'list',
+                type: 'list',
+                placeholder: 'Select a field...',
+                typeOptions: {
+                  searchListMethod,
+                  searchable: true,
+                },
+              },
+              {
+                displayName: 'By Name',
+                name: 'name',
+                type: 'string',
+                placeholder: 'Customfield1',
+                hint: 'technical_name from Qwease',
+              },
+            ],
+          },
+          {
+            displayName: 'Field Value',
+            name: 'value',
+            type: 'string',
+            default: '',
+            description: 'For list fields, use the option ID.',
+          },
+        ],
+      },
+    ],
+  };
+}

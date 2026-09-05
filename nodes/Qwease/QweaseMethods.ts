@@ -7,6 +7,7 @@ import type {
 
 import { qweaseApiRequest, qweaseListFromResponse } from './GenericFunctions';
 import {
+  fetchEntityFields,
   fetchFormFields,
   fetchFormStatusItems,
   resolveFormIdForLists,
@@ -209,6 +210,55 @@ export async function getFormCustomFields(
   }
 
   return { results };
+}
+
+async function listEntityCustomFields(
+  context: ILoadOptionsFunctions,
+  fieldType: 'user' | 'client' | 'device',
+  filter: string | undefined,
+  emptyLabel: string,
+): Promise<INodeListSearchResult> {
+  const fields = await fetchEntityFields(context, fieldType);
+  const results: INodeListSearchItems[] = [];
+
+  for (const field of fields) {
+    const name = `${field.name} (${field.technical_name})`;
+    if (
+      !matchesFilter(name, filter) &&
+      !matchesFilter(field.technical_name, filter) &&
+      !matchesFilter(field.name, filter)
+    ) {
+      continue;
+    }
+    results.push({ name, value: field.technical_name });
+  }
+
+  if (results.length === 0) {
+    return { results: [{ name: emptyLabel, value: '' }] };
+  }
+
+  return { results };
+}
+
+export async function getUserCustomFields(
+  this: ILoadOptionsFunctions,
+  filter?: string,
+): Promise<INodeListSearchResult> {
+  return listEntityCustomFields(this, 'user', filter, 'No user custom fields found');
+}
+
+export async function getClientCustomFields(
+  this: ILoadOptionsFunctions,
+  filter?: string,
+): Promise<INodeListSearchResult> {
+  return listEntityCustomFields(this, 'client', filter, 'No organization custom fields found');
+}
+
+export async function getDeviceCustomFields(
+  this: ILoadOptionsFunctions,
+  filter?: string,
+): Promise<INodeListSearchResult> {
+  return listEntityCustomFields(this, 'device', filter, 'No device custom fields found');
 }
 
 export async function getClients(

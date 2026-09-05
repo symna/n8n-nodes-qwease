@@ -1,5 +1,7 @@
 import type { INodeProperties } from 'n8n-workflow';
 
+import { customFieldsFixedCollectionWithList } from './shared';
+
 export const ticketOperations: INodeProperties[] = [
   {
     displayName: 'Operation',
@@ -100,58 +102,6 @@ const priorityOptions = [
   { name: 'Very Low', value: 'very_low' },
 ];
 
-const customFieldsProperty: INodeProperties = {
-  displayName: 'Custom Fields',
-  name: 'customFieldsUi',
-  type: 'fixedCollection',
-  typeOptions: {
-    multipleValues: true,
-  },
-  default: {},
-  placeholder: 'Add Custom Field',
-  description: 'Fields from the selected form (Create) or ticket form (Update).',
-  options: [
-    {
-      displayName: 'Field',
-      name: 'field',
-      values: [
-        {
-          displayName: 'Field',
-          name: 'key',
-          type: 'resourceLocator',
-          default: { mode: 'list', value: '' },
-          modes: [
-            {
-              displayName: 'From List',
-              name: 'list',
-              type: 'list',
-              placeholder: 'Select a field...',
-              typeOptions: {
-                searchListMethod: 'getFormCustomFields',
-                searchable: true,
-              },
-            },
-            {
-              displayName: 'By Name',
-              name: 'name',
-              type: 'string',
-              placeholder: 'Customfield1',
-              hint: 'technical_name from Qwease',
-            },
-          ],
-        },
-        {
-          displayName: 'Field Value',
-          name: 'value',
-          type: 'string',
-          default: '',
-          description: 'For list fields, use the option ID.',
-        },
-      ],
-    },
-  ],
-};
-
 const optionalTicketFields: INodeProperties[] = [
   {
     displayName: 'Priority',
@@ -217,7 +167,10 @@ const optionalTicketFields: INodeProperties[] = [
     type: 'dateTime',
     default: '',
   },
-  customFieldsProperty,
+  customFieldsFixedCollectionWithList(
+    'getFormCustomFields',
+    'Fields from the selected form (Create) or ticket form (Update).',
+  ),
 ];
 
 export const ticketFields: INodeProperties[] = [

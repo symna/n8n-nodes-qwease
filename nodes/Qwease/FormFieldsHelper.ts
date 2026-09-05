@@ -119,6 +119,43 @@ export async function fetchFormFields(
   return fields;
 }
 
+/** Entity-scoped custom fields: type=user | client | device */
+export async function fetchEntityFields(
+  context: QweaseContext,
+  fieldType: 'user' | 'client' | 'device',
+): Promise<QweaseFormField[]> {
+  const response = await qweaseApiRequest.call(
+    context,
+    'GET',
+    '/fields/',
+    {},
+    { type: fieldType, is_active: true, depth: 1 },
+  );
+  const list = qweaseListFromResponse(response);
+  const fields: QweaseFormField[] = [];
+  const seen = new Set<string>();
+
+  for (const entry of list) {
+    if (!entry || typeof entry !== 'object') {
+      continue;
+    }
+    const technicalName = String(entry.technical_name || '');
+    if (!technicalName || seen.has(technicalName)) {
+      continue;
+    }
+    seen.add(technicalName);
+    fields.push({
+      id: parseOptionalId(entry.id) ?? 0,
+      name: String(entry.name || entry.display_name || technicalName),
+      technical_name: technicalName,
+      fields_type: String(entry.fields_type || 'string'),
+      optionslist: Array.isArray(entry.optionslist) ? entry.optionslist : undefined,
+    });
+  }
+
+  return fields;
+}
+
 export async function fetchFormStatusItems(
   context: QweaseContext,
   formId: number,

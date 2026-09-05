@@ -10,8 +10,10 @@ import { buildTicketBodyFromParameters, getTicketIdParameter } from './TicketBod
 import {
   getClients,
   getClientsLoad,
+  getClientCustomFields,
   getDevices,
   getDevicesLoad,
+  getDeviceCustomFields,
   getFormCustomFields,
   getFormStatuses,
   getForms,
@@ -22,6 +24,7 @@ import {
   getTeamsLoad,
   getTickets,
   getTicketsLoad,
+  getUserCustomFields,
   getUsers,
   getUsersLoad,
 } from './QweaseMethods';
@@ -128,6 +131,9 @@ export class Qwease implements INodeType {
       getTasks,
       getFormStatuses,
       getFormCustomFields,
+      getUserCustomFields,
+      getClientCustomFields,
+      getDeviceCustomFields,
     },
     loadOptions: {
       getUsersLoad,

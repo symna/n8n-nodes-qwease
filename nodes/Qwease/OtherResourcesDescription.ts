@@ -1,7 +1,7 @@
 import type { INodeProperties } from 'n8n-workflow';
 
 import {
-  customFieldsFixedCollection,
+  customFieldsFixedCollectionWithList,
   multiOptionsFromLoad,
   resourceLocatorModes,
   returnAllLimitFields,
@@ -94,7 +94,7 @@ export const userFields: INodeProperties[] = [
         type: 'boolean',
         default: true,
       },
-      customFieldsFixedCollection,
+      customFieldsFixedCollectionWithList('getUserCustomFields'),
     ],
   },
   {
@@ -116,7 +116,7 @@ export const userFields: INodeProperties[] = [
         modes: resourceLocatorModes('getClients', 'Select an organization...'),
       },
       { displayName: 'Active', name: 'isActive', type: 'boolean', default: true },
-      customFieldsFixedCollection,
+      customFieldsFixedCollectionWithList('getUserCustomFields'),
     ],
   },
   ...returnAllLimitFields('user'),
@@ -166,7 +166,7 @@ export const organizationFields: INodeProperties[] = [
     displayOptions: { show: { resource: ['organization'], operation: ['create'] } },
     options: [
       { displayName: 'Active', name: 'isActive', type: 'boolean', default: true },
-      customFieldsFixedCollection,
+      customFieldsFixedCollectionWithList('getClientCustomFields'),
     ],
   },
   {
@@ -179,7 +179,7 @@ export const organizationFields: INodeProperties[] = [
     options: [
       { displayName: 'Name', name: 'name', type: 'string', default: '' },
       { displayName: 'Active', name: 'isActive', type: 'boolean', default: true },
-      customFieldsFixedCollection,
+      customFieldsFixedCollectionWithList('getClientCustomFields'),
     ],
   },
   ...returnAllLimitFields('organization'),
@@ -246,7 +246,7 @@ export const deviceFields: INodeProperties[] = [
         modes: resourceLocatorModes('getUsers', 'Select a user...'),
       },
       { displayName: 'Active', name: 'isActive', type: 'boolean', default: true },
-      customFieldsFixedCollection,
+      customFieldsFixedCollectionWithList('getDeviceCustomFields'),
     ],
   },
   {
@@ -274,7 +274,7 @@ export const deviceFields: INodeProperties[] = [
         modes: resourceLocatorModes('getUsers', 'Select a user...'),
       },
       { displayName: 'Active', name: 'isActive', type: 'boolean', default: true },
-      customFieldsFixedCollection,
+      customFieldsFixedCollectionWithList('getDeviceCustomFields'),
     ],
   },
   ...returnAllLimitFields('device'),
