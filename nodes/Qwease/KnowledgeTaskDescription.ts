@@ -16,9 +16,9 @@ export const knowledgeOperations: INodeProperties[] = [
       { name: 'Create', value: 'create', action: 'Create a knowledge page' },
       { name: 'Get', value: 'get', action: 'Get a knowledge page' },
       { name: 'Get Many', value: 'getAll', action: 'Get many knowledge pages' },
+      { name: 'Search', value: 'search', action: 'Search knowledge pages' },
       { name: 'Update', value: 'update', action: 'Update a knowledge page' },
       { name: 'Update Content', value: 'updateContent', action: 'Update knowledge page content' },
-      { name: 'Search', value: 'search', action: 'Search knowledge pages' },
     ],
     default: 'getAll',
   },
@@ -78,6 +78,10 @@ export const knowledgeFields: INodeProperties[] = [
     default: {},
     displayOptions: { show: { resource: ['knowledge'], operation: ['create'] } },
     options: [
+      { displayName: 'Color', name: 'color', type: 'color', default: '' },
+      { displayName: 'Cover URL', name: 'coverUrl', type: 'string', default: '' },
+      { displayName: 'Icon', name: 'icon', type: 'string', default: '' },
+      { displayName: 'Order', name: 'order', type: 'number', default: 0 },
       {
         displayName: 'Parent Page',
         name: 'parent',
@@ -85,10 +89,6 @@ export const knowledgeFields: INodeProperties[] = [
         default: { mode: 'list', value: '' },
         modes: resourceLocatorModes('getPages', 'Select a parent...'),
       },
-      { displayName: 'Order', name: 'order', type: 'number', default: 0 },
-      { displayName: 'Icon', name: 'icon', type: 'string', default: '' },
-      { displayName: 'Cover URL', name: 'coverUrl', type: 'string', default: '' },
-      { displayName: 'Color', name: 'color', type: 'string', default: '' },
     ],
   },
   {
@@ -99,6 +99,27 @@ export const knowledgeFields: INodeProperties[] = [
     default: {},
     displayOptions: { show: { resource: ['knowledge'], operation: ['update'] } },
     options: [
+      { displayName: 'Color', name: 'color', type: 'color', default: '' },
+      { displayName: 'Cover URL', name: 'coverUrl', type: 'string', default: '' },
+      { displayName: 'Icon', name: 'icon', type: 'string', default: '' },
+      { displayName: 'Order', name: 'order', type: 'number', default: 0 },
+      {
+        displayName: 'Parent Page',
+        name: 'parent',
+        type: 'resourceLocator',
+        default: { mode: 'list', value: '' },
+        modes: resourceLocatorModes('getPages', 'Select a parent...'),
+      },
+      {
+        displayName: 'Status',
+        name: 'pageStatus',
+        type: 'options',
+        options: [
+          { name: 'Draft', value: 'draft' },
+          { name: 'Published', value: 'published' },
+        ],
+        default: 'draft',
+      },
       { displayName: 'Title', name: 'title', type: 'string', default: '' },
       {
         displayName: 'Type',
@@ -111,27 +132,6 @@ export const knowledgeFields: INodeProperties[] = [
         ],
         default: 'page',
       },
-      {
-        displayName: 'Status',
-        name: 'pageStatus',
-        type: 'options',
-        options: [
-          { name: 'Draft', value: 'draft' },
-          { name: 'Published', value: 'published' },
-        ],
-        default: 'draft',
-      },
-      {
-        displayName: 'Parent Page',
-        name: 'parent',
-        type: 'resourceLocator',
-        default: { mode: 'list', value: '' },
-        modes: resourceLocatorModes('getPages', 'Select a parent...'),
-      },
-      { displayName: 'Order', name: 'order', type: 'number', default: 0 },
-      { displayName: 'Icon', name: 'icon', type: 'string', default: '' },
-      { displayName: 'Cover URL', name: 'coverUrl', type: 'string', default: '' },
-      { displayName: 'Color', name: 'color', type: 'string', default: '' },
     ],
   },
   {
@@ -141,7 +141,7 @@ export const knowledgeFields: INodeProperties[] = [
     required: true,
     displayOptions: { show: { resource: ['knowledge'], operation: ['updateContent'] } },
     default: '{}',
-    description: 'Page body payload for PATCH /pages/{id}/content/',
+    description: 'Page body payload for PATCH /pages/{ID}/content/',
   },
   {
     displayName: 'Query',
@@ -222,6 +222,19 @@ export const taskFields: INodeProperties[] = [
         default: '',
       },
       {
+        displayName: 'Status',
+        name: 'taskStatus',
+        type: 'options',
+        options: [
+          { name: 'Done', value: 'done' },
+          { name: 'Open', value: 'open' },
+          { name: 'Passed', value: 'passed' },
+          { name: 'Pending', value: 'pending' },
+          { name: 'Refused', value: 'refused' },
+        ],
+        default: 'open',
+      },
+      {
         displayName: 'Type',
         name: 'taskType',
         type: 'options',
@@ -230,19 +243,6 @@ export const taskFields: INodeProperties[] = [
           { name: 'Workflow', value: 'workflow' },
         ],
         default: 'todo',
-      },
-      {
-        displayName: 'Status',
-        name: 'taskStatus',
-        type: 'options',
-        options: [
-          { name: 'Pending', value: 'pending' },
-          { name: 'Open', value: 'open' },
-          { name: 'Passed', value: 'passed' },
-          { name: 'Done', value: 'done' },
-          { name: 'Refused', value: 'refused' },
-        ],
-        default: 'open',
       },
       {
         displayName: 'Validator',
@@ -261,7 +261,6 @@ export const taskFields: INodeProperties[] = [
     default: {},
     displayOptions: { show: { resource: ['task'], operation: ['update'] } },
     options: [
-      { displayName: 'Title', name: 'taskTitle', type: 'string', default: '' },
       {
         displayName: 'Description',
         name: 'taskDescription',
@@ -271,24 +270,14 @@ export const taskFields: INodeProperties[] = [
       },
       { displayName: 'Position', name: 'taskPosition', type: 'number', default: 1 },
       {
-        displayName: 'Type',
-        name: 'taskType',
-        type: 'options',
-        options: [
-          { name: 'To Do', value: 'todo' },
-          { name: 'Workflow', value: 'workflow' },
-        ],
-        default: 'todo',
-      },
-      {
         displayName: 'Status',
         name: 'taskStatus',
         type: 'options',
         options: [
-          { name: 'Pending', value: 'pending' },
+          { name: 'Done', value: 'done' },
           { name: 'Open', value: 'open' },
           { name: 'Passed', value: 'passed' },
-          { name: 'Done', value: 'done' },
+          { name: 'Pending', value: 'pending' },
           { name: 'Refused', value: 'refused' },
         ],
         default: 'open',
@@ -298,6 +287,17 @@ export const taskFields: INodeProperties[] = [
         name: 'taskStatusCommentary',
         type: 'string',
         default: '',
+      },
+      { displayName: 'Title', name: 'taskTitle', type: 'string', default: '' },
+      {
+        displayName: 'Type',
+        name: 'taskType',
+        type: 'options',
+        options: [
+          { name: 'To Do', value: 'todo' },
+          { name: 'Workflow', value: 'workflow' },
+        ],
+        default: 'todo',
       },
       {
         displayName: 'Validator',

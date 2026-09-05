@@ -15,6 +15,11 @@ export const ticketOperations: INodeProperties[] = [
     },
     options: [
       {
+        name: 'Add Comment',
+        value: 'addComment',
+        action: 'Add a comment to a ticket',
+      },
+      {
         name: 'Create',
         value: 'create',
         action: 'Create a ticket',
@@ -33,11 +38,6 @@ export const ticketOperations: INodeProperties[] = [
         name: 'Update',
         value: 'update',
         action: 'Update a ticket',
-      },
-      {
-        name: 'Add Comment',
-        value: 'addComment',
-        action: 'Add a comment to a ticket',
       },
     ],
     default: 'getAll',
@@ -366,12 +366,13 @@ export const ticketFields: INodeProperties[] = [
       },
     },
     default: false,
-    description: 'If true, comment is internal (not visible to requester)',
+    description: 'Whether the comment is internal (not visible to requester)',
   },
   {
     displayName: 'Return All',
     name: 'returnAll',
     type: 'boolean',
+				description: 'Whether to return all results or only up to a given limit',
     displayOptions: {
       show: {
         resource: ['ticket'],
@@ -384,6 +385,7 @@ export const ticketFields: INodeProperties[] = [
     displayName: 'Limit',
     name: 'limit',
     type: 'number',
+				description: 'Max number of results to return',
     typeOptions: { minValue: 1 },
     displayOptions: {
       show: {

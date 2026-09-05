@@ -50,6 +50,7 @@ export const userFields: INodeProperties[] = [
     displayName: 'Email',
     name: 'email',
     type: 'string',
+				placeholder: 'name@email.com',
     required: true,
     displayOptions: { show: { resource: ['user'], operation: ['create'] } },
     default: '',
@@ -105,7 +106,10 @@ export const userFields: INodeProperties[] = [
     default: {},
     displayOptions: { show: { resource: ['user'], operation: ['update'] } },
     options: [
-      { displayName: 'Email', name: 'email', type: 'string', default: '' },
+      { displayName: 'Active', name: 'isActive', type: 'boolean', default: true },
+      customFieldsFixedCollectionWithList('getUserCustomFields'),
+      { displayName: 'Email', name: 'email', type: 'string',
+																																													placeholder: 'name@email.com', default: '' },
       { displayName: 'First Name', name: 'firstName', type: 'string', default: '' },
       { displayName: 'Last Name', name: 'lastName', type: 'string', default: '' },
       {
@@ -115,8 +119,6 @@ export const userFields: INodeProperties[] = [
         default: { mode: 'list', value: '' },
         modes: resourceLocatorModes('getClients', 'Select an organization...'),
       },
-      { displayName: 'Active', name: 'isActive', type: 'boolean', default: true },
-      customFieldsFixedCollectionWithList('getUserCustomFields'),
     ],
   },
   ...returnAllLimitFields('user'),
@@ -257,6 +259,8 @@ export const deviceFields: INodeProperties[] = [
     default: {},
     displayOptions: { show: { resource: ['device'], operation: ['update'] } },
     options: [
+      { displayName: 'Active', name: 'isActive', type: 'boolean', default: true },
+      customFieldsFixedCollectionWithList('getDeviceCustomFields'),
       { displayName: 'Name', name: 'name', type: 'string', default: '' },
       {
         displayName: 'Organization',
@@ -265,7 +269,6 @@ export const deviceFields: INodeProperties[] = [
         default: { mode: 'list', value: '' },
         modes: resourceLocatorModes('getClients', 'Select an organization...'),
       },
-      { displayName: 'Serial Number', name: 'serialNumber', type: 'string', default: '' },
       {
         displayName: 'Owner',
         name: 'owner',
@@ -273,8 +276,7 @@ export const deviceFields: INodeProperties[] = [
         default: { mode: 'list', value: '' },
         modes: resourceLocatorModes('getUsers', 'Select a user...'),
       },
-      { displayName: 'Active', name: 'isActive', type: 'boolean', default: true },
-      customFieldsFixedCollectionWithList('getDeviceCustomFields'),
+      { displayName: 'Serial Number', name: 'serialNumber', type: 'string', default: '' },
     ],
   },
   ...returnAllLimitFields('device'),
@@ -442,7 +444,7 @@ export const searchFields: INodeProperties[] = [
     type: 'string',
     displayOptions: { show: { resource: ['search'], operation: ['advanced'] } },
     default: '',
-    description: 'e.g. -created_at',
+    description: 'E.g. -created_at.',
   },
   {
     displayName: 'Include Custom Fields Display',
@@ -457,7 +459,7 @@ export const searchFields: INodeProperties[] = [
     type: 'boolean',
     displayOptions: { show: { resource: ['search'], operation: ['advanced'] } },
     default: false,
-    description: 'If enabled, paginates until all results are fetched (ignores Page)',
+    description: 'Whether to return all results or only up to a given limit',
   },
   {
     displayName: 'Query',

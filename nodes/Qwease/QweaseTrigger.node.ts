@@ -45,7 +45,7 @@ export class QweaseTrigger implements INodeType {
   description: INodeTypeDescription = {
     displayName: 'Qwease Trigger',
     name: 'qweaseTrigger',
-    icon: 'file:qwease.png',
+    icon: 'file:qwease.svg',
     group: ['trigger'],
     version: 1,
     description: 'Starts the workflow when Qwease sends a signed webhook event',
@@ -69,7 +69,7 @@ export class QweaseTrigger implements INodeType {
         type: 'string',
         default: 'qwease',
         required: true,
-        description: 'Webhook path suffix (production URL ends with /webhook/<path>)',
+        description: 'Webhook path suffix (production URL ends with /webhook/&lt;path&gt;)',
       },
       {
         displayName: 'Webhook Secret',
@@ -95,9 +95,10 @@ export class QweaseTrigger implements INodeType {
         type: 'boolean',
         default: false,
         description:
-          'If enabled, still emit the item when HMAC verification fails (not recommended in production)',
+          'Whether to still emit the item when HMAC verification fails (not recommended in production)',
       },
     ],
+		usableAsTool: true,
   };
 
   webhookMethods = {

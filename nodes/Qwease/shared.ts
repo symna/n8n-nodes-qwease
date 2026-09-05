@@ -41,6 +41,7 @@ export const returnAllLimitFields = (resource: string): INodeProperties[] => [
     displayName: 'Return All',
     name: 'returnAll',
     type: 'boolean',
+				description: 'Whether to return all results or only up to a given limit',
     displayOptions: {
       show: {
         resource: [resource],
@@ -53,6 +54,7 @@ export const returnAllLimitFields = (resource: string): INodeProperties[] => [
     displayName: 'Limit',
     name: 'limit',
     type: 'number',
+				description: 'Max number of results to return',
     typeOptions: { minValue: 1 },
     displayOptions: {
       show: {

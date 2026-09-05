@@ -4,6 +4,7 @@ import type {
   INodeType,
   INodeTypeDescription,
 } from 'n8n-workflow';
+import { NodeOperationError } from 'n8n-workflow';
 
 import { qweaseApiRequest, qweaseListFromResponse } from './GenericFunctions';
 import { buildTicketBodyFromParameters, getTicketIdParameter } from './TicketBody';
@@ -63,7 +64,7 @@ export class Qwease implements INodeType {
   description: INodeTypeDescription = {
     displayName: 'Qwease',
     name: 'qwease',
-    icon: 'file:qwease.png',
+    icon: 'file:qwease.svg',
     group: ['transform'],
     version: 1,
     subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
@@ -88,15 +89,15 @@ export class Qwease implements INodeType {
         type: 'options',
         noDataExpression: true,
         options: [
+          { name: 'Device', value: 'device' },
+          { name: 'Knowledge', value: 'knowledge' },
+          { name: 'Me', value: 'me' },
+          { name: 'Organization', value: 'organization' },
+          { name: 'Search', value: 'search' },
+          { name: 'Task', value: 'task' },
+          { name: 'Team', value: 'team' },
           { name: 'Ticket', value: 'ticket' },
           { name: 'User', value: 'user' },
-          { name: 'Organization', value: 'organization' },
-          { name: 'Device', value: 'device' },
-          { name: 'Team', value: 'team' },
-          { name: 'Knowledge', value: 'knowledge' },
-          { name: 'Task', value: 'task' },
-          { name: 'Search', value: 'search' },
-          { name: 'Me', value: 'me' },
         ],
         default: 'ticket',
       },
@@ -178,7 +179,9 @@ export class Qwease implements INodeType {
             const ticketId = getTicketIdParameter.call(this, i);
             const body = buildTicketBodyFromParameters.call(this, i, false);
             if (Object.keys(body).length === 0) {
-              throw new Error('Set at least one field to update.');
+              throw new NodeOperationError(this.getNode(), 'Set at least one field to update.', {
+                itemIndex: i,
+              });
             }
             const response = await qweaseApiRequest.call(
               this,

@@ -17,28 +17,17 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          # Pin LTS; avoid cache edge-cases on first publishes
           node-version: '22'
-      - name: Debug workspace
-        run: |
-          ls -la
-          node -v
-          npm -v
-          test -f package-lock.json && echo 'lockfile ok' || echo 'NO LOCKFILE'
-          python3 - <<'PY'
-          import json
-          pkg=json.load(open('package.json'))
-          lock=json.load(open('package-lock.json'))
-          print('pkg', pkg['version'], 'lock', lock.get('version'))
-          print('devDeps', sorted(pkg.get('devDependencies', {})))
-          print('lockDev', sorted(lock.get('packages', {}).get('', {}).get('devDependencies', {})))
-          PY
       - name: Install dependencies
-        run: |
-          npm install --no-fund --no-audit
+        run: npm install --no-fund --no-audit
       - name: Release
         run: |
-          [ -n "$NPM_TOKEN" ] && npm config set //registry.npmjs.org/:_authToken "$NPM_TOKEN"
+          if [ -n "$NPM_TOKEN" ]; then
+            npm config set //registry.npmjs.org/:_authToken "$NPM_TOKEN"
+            echo "Using NPM_TOKEN secret"
+          else
+            echo "No NPM_TOKEN — relying on OIDC Trusted Publisher"
+          fi
           npm run release
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

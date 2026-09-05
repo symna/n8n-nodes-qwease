@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-qwease",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "description": "n8n community node for the Qwease ITSM API (tickets, users, KB, tasks, webhooks)",
   "license": "MIT",
   "homepage": "https://qwease.fr",
@@ -42,6 +42,7 @@
   },
   "devDependencies": {
     "@n8n/node-cli": "^0.23.0",
+    "eslint": "^9.39.4",
     "typescript": "^5.8.0"
   },
   "peerDependencies": {

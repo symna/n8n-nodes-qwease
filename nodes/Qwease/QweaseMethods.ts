@@ -51,7 +51,7 @@ export async function getForms(
     return {
       results: [
         {
-          name: 'No forms found — check type or API access',
+          name: 'No Forms Found — Check Type or API Access',
           value: '',
         },
       ],
@@ -82,7 +82,7 @@ export async function getUsers(
   }
 
   if (results.length === 0) {
-    return { results: [{ name: 'No users found', value: '' }] };
+    return { results: [{ name: 'No Users Found', value: '' }] };
   }
 
   return { results };
@@ -107,7 +107,7 @@ export async function getTeams(
   }
 
   if (results.length === 0) {
-    return { results: [{ name: 'No teams found', value: '' }] };
+    return { results: [{ name: 'No Teams Found', value: '' }] };
   }
 
   return { results };
@@ -134,7 +134,7 @@ export async function getTickets(
   }
 
   if (results.length === 0) {
-    return { results: [{ name: 'No tickets found', value: '' }] };
+    return { results: [{ name: 'No Tickets Found', value: '' }] };
   }
 
   return { results };
@@ -149,7 +149,7 @@ export async function getFormStatuses(
     return {
       results: [
         {
-          name: 'Select a Form (create) or Ticket (update) first',
+          name: 'Select a Form (Create) or Ticket (Update) First',
           value: '',
         },
       ],
@@ -170,7 +170,7 @@ export async function getFormStatuses(
   }
 
   if (results.length === 0) {
-    return { results: [{ name: 'No statuses for this form', value: '' }] };
+    return { results: [{ name: 'No Statuses for This Form', value: '' }] };
   }
 
   return { results };
@@ -185,7 +185,7 @@ export async function getFormCustomFields(
     return {
       results: [
         {
-          name: 'Select a Form (create) or Ticket (update) first',
+          name: 'Select a Form (Create) or Ticket (Update) First',
           value: '',
         },
       ],
@@ -208,7 +208,7 @@ export async function getFormCustomFields(
   }
 
   if (results.length === 0) {
-    return { results: [{ name: 'No custom fields on this form', value: '' }] };
+    return { results: [{ name: 'No Custom Fields on This Form', value: '' }] };
   }
 
   return { results };
@@ -277,7 +277,7 @@ export async function getCustomFieldOptions(
   const technicalName = extractLocatorValue(keyParam);
   if (!technicalName) {
     return {
-      results: [{ name: 'Select a Field first', value: '' }],
+      results: [{ name: 'Select a Field First', value: '' }],
     };
   }
 
@@ -301,7 +301,7 @@ export async function getCustomFieldOptions(
     return {
       results: [
         {
-          name: 'No list options — switch Field Value to By Value',
+          name: 'No List Options — Switch Field Value to By Value',
           value: '',
         },
       ],
@@ -331,7 +331,7 @@ export async function getClients(
   }
 
   if (results.length === 0) {
-    return { results: [{ name: 'No organizations found', value: '' }] };
+    return { results: [{ name: 'No Organizations Found', value: '' }] };
   }
 
   return { results };
@@ -358,7 +358,7 @@ export async function getDevices(
   }
 
   if (results.length === 0) {
-    return { results: [{ name: 'No devices found', value: '' }] };
+    return { results: [{ name: 'No Devices Found', value: '' }] };
   }
 
   return { results };
@@ -385,7 +385,7 @@ export async function getPages(
   }
 
   if (results.length === 0) {
-    return { results: [{ name: 'No pages found', value: '' }] };
+    return { results: [{ name: 'No Pages Found', value: '' }] };
   }
 
   return { results };
@@ -412,7 +412,7 @@ export async function getTasks(
   }
 
   if (results.length === 0) {
-    return { results: [{ name: 'No tasks found', value: '' }] };
+    return { results: [{ name: 'No Tasks Found', value: '' }] };
   }
 
   return { results };
