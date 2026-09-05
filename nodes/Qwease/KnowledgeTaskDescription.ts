@@ -1,0 +1,312 @@
+import type { INodeProperties } from 'n8n-workflow';
+
+import {
+  resourceLocatorModes,
+  returnAllLimitFields,
+} from './shared';
+
+export const knowledgeOperations: INodeProperties[] = [
+  {
+    displayName: 'Operation',
+    name: 'operation',
+    type: 'options',
+    noDataExpression: true,
+    displayOptions: { show: { resource: ['knowledge'] } },
+    options: [
+      { name: 'Create', value: 'create', action: 'Create a knowledge page' },
+      { name: 'Get', value: 'get', action: 'Get a knowledge page' },
+      { name: 'Get Many', value: 'getAll', action: 'Get many knowledge pages' },
+      { name: 'Update', value: 'update', action: 'Update a knowledge page' },
+      { name: 'Update Content', value: 'updateContent', action: 'Update knowledge page content' },
+      { name: 'Search', value: 'search', action: 'Search knowledge pages' },
+    ],
+    default: 'getAll',
+  },
+];
+
+export const knowledgeFields: INodeProperties[] = [
+  {
+    displayName: 'Page',
+    name: 'pageId',
+    type: 'resourceLocator',
+    default: { mode: 'list', value: '' },
+    required: true,
+    displayOptions: {
+      show: {
+        resource: ['knowledge'],
+        operation: ['get', 'update', 'updateContent'],
+      },
+    },
+    modes: resourceLocatorModes('getPages', 'Select a page...'),
+  },
+  {
+    displayName: 'Title',
+    name: 'title',
+    type: 'string',
+    required: true,
+    displayOptions: { show: { resource: ['knowledge'], operation: ['create'] } },
+    default: '',
+  },
+  {
+    displayName: 'Type',
+    name: 'pageType',
+    type: 'options',
+    options: [
+      { name: 'Page', value: 'page' },
+      { name: 'Folder', value: 'folder' },
+      { name: 'Template', value: 'template' },
+    ],
+    displayOptions: { show: { resource: ['knowledge'], operation: ['create'] } },
+    default: 'page',
+  },
+  {
+    displayName: 'Status',
+    name: 'pageStatus',
+    type: 'options',
+    options: [
+      { name: 'Draft', value: 'draft' },
+      { name: 'Published', value: 'published' },
+    ],
+    displayOptions: { show: { resource: ['knowledge'], operation: ['create'] } },
+    default: 'draft',
+  },
+  {
+    displayName: 'Additional Fields',
+    name: 'additionalFields',
+    type: 'collection',
+    placeholder: 'Add Field',
+    default: {},
+    displayOptions: { show: { resource: ['knowledge'], operation: ['create'] } },
+    options: [
+      {
+        displayName: 'Parent Page',
+        name: 'parent',
+        type: 'resourceLocator',
+        default: { mode: 'list', value: '' },
+        modes: resourceLocatorModes('getPages', 'Select a parent...'),
+      },
+      { displayName: 'Order', name: 'order', type: 'number', default: 0 },
+      { displayName: 'Icon', name: 'icon', type: 'string', default: '' },
+      { displayName: 'Cover URL', name: 'coverUrl', type: 'string', default: '' },
+      { displayName: 'Color', name: 'color', type: 'string', default: '' },
+    ],
+  },
+  {
+    displayName: 'Update Fields',
+    name: 'updateFields',
+    type: 'collection',
+    placeholder: 'Add Field',
+    default: {},
+    displayOptions: { show: { resource: ['knowledge'], operation: ['update'] } },
+    options: [
+      { displayName: 'Title', name: 'title', type: 'string', default: '' },
+      {
+        displayName: 'Type',
+        name: 'pageType',
+        type: 'options',
+        options: [
+          { name: 'Page', value: 'page' },
+          { name: 'Folder', value: 'folder' },
+          { name: 'Template', value: 'template' },
+        ],
+        default: 'page',
+      },
+      {
+        displayName: 'Status',
+        name: 'pageStatus',
+        type: 'options',
+        options: [
+          { name: 'Draft', value: 'draft' },
+          { name: 'Published', value: 'published' },
+        ],
+        default: 'draft',
+      },
+      {
+        displayName: 'Parent Page',
+        name: 'parent',
+        type: 'resourceLocator',
+        default: { mode: 'list', value: '' },
+        modes: resourceLocatorModes('getPages', 'Select a parent...'),
+      },
+      { displayName: 'Order', name: 'order', type: 'number', default: 0 },
+      { displayName: 'Icon', name: 'icon', type: 'string', default: '' },
+      { displayName: 'Cover URL', name: 'coverUrl', type: 'string', default: '' },
+      { displayName: 'Color', name: 'color', type: 'string', default: '' },
+    ],
+  },
+  {
+    displayName: 'Content',
+    name: 'content',
+    type: 'json',
+    required: true,
+    displayOptions: { show: { resource: ['knowledge'], operation: ['updateContent'] } },
+    default: '{}',
+    description: 'Page body payload for PATCH /pages/{id}/content/',
+  },
+  {
+    displayName: 'Query',
+    name: 'knowledgeQuery',
+    type: 'string',
+    required: true,
+    displayOptions: { show: { resource: ['knowledge'], operation: ['search'] } },
+    default: '',
+  },
+  ...returnAllLimitFields('knowledge'),
+];
+
+export const taskOperations: INodeProperties[] = [
+  {
+    displayName: 'Operation',
+    name: 'operation',
+    type: 'options',
+    noDataExpression: true,
+    displayOptions: { show: { resource: ['task'] } },
+    options: [
+      { name: 'Create', value: 'create', action: 'Create a task' },
+      { name: 'Get', value: 'get', action: 'Get a task' },
+      { name: 'Get Many', value: 'getAll', action: 'Get many tasks' },
+      { name: 'Update', value: 'update', action: 'Update a task' },
+    ],
+    default: 'getAll',
+  },
+];
+
+export const taskFields: INodeProperties[] = [
+  {
+    displayName: 'Task',
+    name: 'taskId',
+    type: 'resourceLocator',
+    default: { mode: 'list', value: '' },
+    required: true,
+    displayOptions: { show: { resource: ['task'], operation: ['get', 'update'] } },
+    modes: resourceLocatorModes('getTasks', 'Select a task...'),
+  },
+  {
+    displayName: 'Ticket',
+    name: 'ticket',
+    type: 'resourceLocator',
+    default: { mode: 'list', value: '' },
+    required: true,
+    displayOptions: { show: { resource: ['task'], operation: ['create'] } },
+    modes: resourceLocatorModes('getTickets', 'Select a ticket...'),
+  },
+  {
+    displayName: 'Title',
+    name: 'taskTitle',
+    type: 'string',
+    required: true,
+    displayOptions: { show: { resource: ['task'], operation: ['create'] } },
+    default: '',
+  },
+  {
+    displayName: 'Position',
+    name: 'taskPosition',
+    type: 'number',
+    required: true,
+    displayOptions: { show: { resource: ['task'], operation: ['create'] } },
+    default: 1,
+  },
+  {
+    displayName: 'Additional Fields',
+    name: 'additionalFields',
+    type: 'collection',
+    placeholder: 'Add Field',
+    default: {},
+    displayOptions: { show: { resource: ['task'], operation: ['create'] } },
+    options: [
+      {
+        displayName: 'Description',
+        name: 'taskDescription',
+        type: 'string',
+        typeOptions: { rows: 3 },
+        default: '',
+      },
+      {
+        displayName: 'Type',
+        name: 'taskType',
+        type: 'options',
+        options: [
+          { name: 'To Do', value: 'todo' },
+          { name: 'Workflow', value: 'workflow' },
+        ],
+        default: 'todo',
+      },
+      {
+        displayName: 'Status',
+        name: 'taskStatus',
+        type: 'options',
+        options: [
+          { name: 'Pending', value: 'pending' },
+          { name: 'Open', value: 'open' },
+          { name: 'Passed', value: 'passed' },
+          { name: 'Done', value: 'done' },
+          { name: 'Refused', value: 'refused' },
+        ],
+        default: 'open',
+      },
+      {
+        displayName: 'Validator',
+        name: 'taskValidator',
+        type: 'resourceLocator',
+        default: { mode: 'list', value: '' },
+        modes: resourceLocatorModes('getUsers', 'Select a user...'),
+      },
+    ],
+  },
+  {
+    displayName: 'Update Fields',
+    name: 'updateFields',
+    type: 'collection',
+    placeholder: 'Add Field',
+    default: {},
+    displayOptions: { show: { resource: ['task'], operation: ['update'] } },
+    options: [
+      { displayName: 'Title', name: 'taskTitle', type: 'string', default: '' },
+      {
+        displayName: 'Description',
+        name: 'taskDescription',
+        type: 'string',
+        typeOptions: { rows: 3 },
+        default: '',
+      },
+      { displayName: 'Position', name: 'taskPosition', type: 'number', default: 1 },
+      {
+        displayName: 'Type',
+        name: 'taskType',
+        type: 'options',
+        options: [
+          { name: 'To Do', value: 'todo' },
+          { name: 'Workflow', value: 'workflow' },
+        ],
+        default: 'todo',
+      },
+      {
+        displayName: 'Status',
+        name: 'taskStatus',
+        type: 'options',
+        options: [
+          { name: 'Pending', value: 'pending' },
+          { name: 'Open', value: 'open' },
+          { name: 'Passed', value: 'passed' },
+          { name: 'Done', value: 'done' },
+          { name: 'Refused', value: 'refused' },
+        ],
+        default: 'open',
+      },
+      {
+        displayName: 'Status Commentary',
+        name: 'taskStatusCommentary',
+        type: 'string',
+        default: '',
+      },
+      {
+        displayName: 'Validator',
+        name: 'taskValidator',
+        type: 'resourceLocator',
+        default: { mode: 'list', value: '' },
+        modes: resourceLocatorModes('getUsers', 'Select a user...'),
+      },
+    ],
+  },
+  ...returnAllLimitFields('task'),
+];

@@ -207,7 +207,49 @@ export async function executeTeam(
   if (operation === 'getAll') {
     return executeGetAll(this, itemIndex, '/teams/');
   }
+  if (operation === 'create') {
+    const body: IDataObject = {
+      name: this.getNodeParameter('name', itemIndex) as string,
+    };
+    const additional = this.getNodeParameter('additionalFields', itemIndex, {}) as IDataObject;
+    const clients = parseIdList(additional.clientIds);
+    const members = parseIdList(additional.memberIds);
+    const admins = parseIdList(additional.administratorIds);
+    if (clients) body.client = clients;
+    if (members) body.members = members;
+    if (admins) body.administrators = admins;
+    const response = await qweaseApiRequest.call(this, 'POST', '/teams/', body);
+    return [{ json: response, pairedItem: { item: itemIndex } }];
+  }
+  if (operation === 'update') {
+    const teamId = requireResourceId(this, 'teamId', itemIndex, 'Team');
+    const fields = this.getNodeParameter('updateFields', itemIndex, {}) as IDataObject;
+    const body: IDataObject = {};
+    if (fields.name) body.name = fields.name;
+    const clients = parseIdList(fields.clientIds);
+    const members = parseIdList(fields.memberIds);
+    const admins = parseIdList(fields.administratorIds);
+    if (clients) body.client = clients;
+    if (members) body.members = members;
+    if (admins) body.administrators = admins;
+    if (Object.keys(body).length === 0) {
+      throw new Error('Set at least one field to update.');
+    }
+    const response = await qweaseApiRequest.call(this, 'PATCH', `/teams/${teamId}/`, body);
+    return [{ json: response, pairedItem: { item: itemIndex } }];
+  }
   throw new Error(`Unknown team operation: ${operation}`);
+}
+
+function parseIdList(value: unknown): number[] | undefined {
+  if (value === undefined || value === null || value === '') {
+    return undefined;
+  }
+  const ids = String(value)
+    .split(',')
+    .map((part) => parseInt(part.trim(), 10))
+    .filter((n) => !Number.isNaN(n));
+  return ids.length ? ids : undefined;
 }
 
 export async function executeSearch(

@@ -262,3 +262,57 @@ export async function getDevices(
 
   return { results };
 }
+
+export async function getPages(
+  this: ILoadOptionsFunctions,
+  filter?: string,
+): Promise<INodeListSearchResult> {
+  const response = await qweaseApiRequest.call(this, 'GET', '/pages/');
+  const pages = qweaseListFromResponse(response);
+
+  const results: INodeListSearchItems[] = [];
+
+  for (const page of pages) {
+    const id = page.id as number;
+    const title = (page.title as string) || `Page ${id}`;
+    const kind = (page.type as string) || '';
+    const name = kind ? `${title} (${kind})` : title;
+    if (!matchesFilter(name, filter) && !matchesFilter(String(id), filter)) {
+      continue;
+    }
+    results.push({ name, value: String(id) });
+  }
+
+  if (results.length === 0) {
+    return { results: [{ name: 'No pages found', value: '' }] };
+  }
+
+  return { results };
+}
+
+export async function getTasks(
+  this: ILoadOptionsFunctions,
+  filter?: string,
+): Promise<INodeListSearchResult> {
+  const response = await qweaseApiRequest.call(this, 'GET', '/tasks/');
+  const tasks = qweaseListFromResponse(response);
+
+  const results: INodeListSearchItems[] = [];
+
+  for (const task of tasks) {
+    const id = task.id as number;
+    const title = (task.task_title as string) || `Task ${id}`;
+    const status = (task.task_status as string) || '';
+    const name = status ? `${title} · ${status}` : title;
+    if (!matchesFilter(name, filter) && !matchesFilter(String(id), filter)) {
+      continue;
+    }
+    results.push({ name, value: String(id) });
+  }
+
+  if (results.length === 0) {
+    return { results: [{ name: 'No tasks found', value: '' }] };
+  }
+
+  return { results };
+}

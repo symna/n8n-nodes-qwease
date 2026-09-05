@@ -13,6 +13,8 @@ import {
   getFormCustomFields,
   getFormStatuses,
   getForms,
+  getPages,
+  getTasks,
   getTeams,
   getTickets,
   getUsers,
@@ -32,6 +34,12 @@ import {
   userOperations,
 } from './OtherResourcesDescription';
 import {
+  knowledgeFields,
+  knowledgeOperations,
+  taskFields,
+  taskOperations,
+} from './KnowledgeTaskDescription';
+import {
   executeDevice,
   executeMe,
   executeOrganization,
@@ -39,6 +47,7 @@ import {
   executeTeam,
   executeUser,
 } from './executeOtherResources';
+import { executeKnowledge, executeTask } from './executeKnowledgeTask';
 
 export class Qwease implements INodeType {
   description: INodeTypeDescription = {
@@ -48,7 +57,8 @@ export class Qwease implements INodeType {
     group: ['transform'],
     version: 1,
     subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
-    description: 'Interact with Qwease ITSM (tickets, users, organizations, devices, search)',
+    description:
+      'Interact with Qwease ITSM (tickets, users, organizations, devices, knowledge, tasks, search)',
     defaults: {
       name: 'Qwease',
     },
@@ -73,6 +83,8 @@ export class Qwease implements INodeType {
           { name: 'Organization', value: 'organization' },
           { name: 'Device', value: 'device' },
           { name: 'Team', value: 'team' },
+          { name: 'Knowledge', value: 'knowledge' },
+          { name: 'Task', value: 'task' },
           { name: 'Search', value: 'search' },
           { name: 'Me', value: 'me' },
         ],
@@ -88,6 +100,10 @@ export class Qwease implements INodeType {
       ...deviceFields,
       ...teamOperations,
       ...teamFields,
+      ...knowledgeOperations,
+      ...knowledgeFields,
+      ...taskOperations,
+      ...taskFields,
       ...searchOperations,
       ...searchFields,
       ...meOperations,
@@ -102,6 +118,8 @@ export class Qwease implements INodeType {
       getTickets,
       getClients,
       getDevices,
+      getPages,
+      getTasks,
       getFormStatuses,
       getFormCustomFields,
     },
@@ -171,6 +189,10 @@ export class Qwease implements INodeType {
           results = await executeDevice.call(this, i, operation);
         } else if (resource === 'team') {
           results = await executeTeam.call(this, i, operation);
+        } else if (resource === 'knowledge') {
+          results = await executeKnowledge.call(this, i, operation);
+        } else if (resource === 'task') {
+          results = await executeTask.call(this, i, operation);
         } else if (resource === 'search') {
           results = await executeSearch.call(this, i, operation);
         } else if (resource === 'me') {

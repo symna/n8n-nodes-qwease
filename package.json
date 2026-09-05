@@ -1,7 +1,7 @@
 {
   "name": "n8n-nodes-qwease",
-  "version": "0.2.0",
-  "description": "n8n community node for the Qwease ITSM API (tickets, users, organizations, devices, search)",
+  "version": "0.3.0",
+  "description": "n8n community node for the Qwease ITSM API (tickets, users, KB, tasks, webhooks)",
   "license": "MIT",
   "homepage": "https://qwease.fr",
   "author": {
@@ -36,7 +36,8 @@
       "dist/credentials/QweaseApi.credentials.js"
     ],
     "nodes": [
-      "dist/nodes/Qwease/Qwease.node.js"
+      "dist/nodes/Qwease/Qwease.node.js",
+      "dist/nodes/Qwease/QweaseTrigger.node.js"
     ]
   },
   "devDependencies": {
