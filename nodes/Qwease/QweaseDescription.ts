@@ -104,24 +104,43 @@ const customFieldsProperty: INodeProperties = {
   },
   default: {},
   placeholder: 'Add Custom Field',
-  description:
-    'Keys = technical_name from Qwease (e.g. Customfield1). List fields = option ID as value.',
+  description: 'Fields from the selected form (Create) or ticket form (Update).',
   options: [
     {
       displayName: 'Field',
       name: 'field',
       values: [
         {
-          displayName: 'Technical Name',
+          displayName: 'Field',
           name: 'key',
-          type: 'string',
-          default: '',
+          type: 'resourceLocator',
+          default: { mode: 'list', value: '' },
+          modes: [
+            {
+              displayName: 'From List',
+              name: 'list',
+              type: 'list',
+              placeholder: 'Select a field...',
+              typeOptions: {
+                searchListMethod: 'getFormCustomFields',
+                searchable: true,
+              },
+            },
+            {
+              displayName: 'By Name',
+              name: 'name',
+              type: 'string',
+              placeholder: 'Customfield1',
+              hint: 'technical_name from Qwease',
+            },
+          ],
         },
         {
-          displayName: 'Value',
+          displayName: 'Field Value',
           name: 'value',
           type: 'string',
           default: '',
+          description: 'For list fields, use the option ID.',
         },
       ],
     },
@@ -162,11 +181,30 @@ const optionalTicketFields: INodeProperties[] = [
     modes: teamResourceLocatorModes,
   },
   {
-    displayName: 'Status ID',
+    displayName: 'Status',
     name: 'statusId',
-    type: 'number',
-    default: '',
-    description: 'Status item ID (statut) from your Qwease tenant',
+    type: 'resourceLocator',
+    default: { mode: 'list', value: '' },
+    description: 'Status from the form status model',
+    modes: [
+      {
+        displayName: 'From List',
+        name: 'list',
+        type: 'list',
+        placeholder: 'Select a status...',
+        typeOptions: {
+          searchListMethod: 'getFormStatuses',
+          searchable: true,
+        },
+      },
+      {
+        displayName: 'By ID',
+        name: 'id',
+        type: 'string',
+        placeholder: '1',
+        validation: idModeValidation,
+      },
+    ],
   },
   {
     displayName: 'Desired Resolution Date',

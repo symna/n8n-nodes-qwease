@@ -1,7 +1,9 @@
 import type { IDataObject, IExecuteFunctions } from 'n8n-workflow';
 
+import { extractLocatorValue } from './FormFieldsHelper';
+
 type CustomFieldsUi = {
-  field?: Array<{ key: string; value: string }>;
+  field?: Array<{ key: unknown; value: string }>;
 };
 
 type TicketOptionalFields = IDataObject & {
@@ -54,8 +56,9 @@ function buildCustomFieldsFromUi(customFieldsUi: CustomFieldsUi | undefined): ID
 
   const result: IDataObject = {};
   for (const entry of fields) {
-    if (entry.key) {
-      result[entry.key] = entry.value ?? '';
+    const key = extractLocatorValue(entry.key);
+    if (key) {
+      result[key] = entry.value ?? '';
     }
   }
   return Object.keys(result).length ? result : undefined;

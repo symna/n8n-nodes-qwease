@@ -5,6 +5,11 @@ import type {
 } from 'n8n-workflow';
 
 import { qweaseApiRequest, qweaseListFromResponse } from './GenericFunctions';
+import {
+  fetchFormFields,
+  fetchFormStatusItems,
+  resolveFormIdForLists,
+} from './FormFieldsHelper';
 
 function matchesFilter(label: string, filter?: string): boolean {
   if (!filter) {
@@ -126,6 +131,80 @@ export async function getTickets(
 
   if (results.length === 0) {
     return { results: [{ name: 'No tickets found', value: '' }] };
+  }
+
+  return { results };
+}
+
+export async function getFormStatuses(
+  this: ILoadOptionsFunctions,
+  filter?: string,
+): Promise<INodeListSearchResult> {
+  const formId = await resolveFormIdForLists(this);
+  if (!formId) {
+    return {
+      results: [
+        {
+          name: 'Select a Form (create) or Ticket (update) first',
+          value: '',
+        },
+      ],
+    };
+  }
+
+  const statuses = await fetchFormStatusItems(this, formId);
+  const results: INodeListSearchItems[] = [];
+
+  for (const status of statuses) {
+    const id = status.id as number;
+    const name =
+      (status.display_name as string) || (status.name as string) || `Status ${id}`;
+    if (!matchesFilter(name, filter) && !matchesFilter(String(id), filter)) {
+      continue;
+    }
+    results.push({ name, value: String(id) });
+  }
+
+  if (results.length === 0) {
+    return { results: [{ name: 'No statuses for this form', value: '' }] };
+  }
+
+  return { results };
+}
+
+export async function getFormCustomFields(
+  this: ILoadOptionsFunctions,
+  filter?: string,
+): Promise<INodeListSearchResult> {
+  const formId = await resolveFormIdForLists(this);
+  if (!formId) {
+    return {
+      results: [
+        {
+          name: 'Select a Form (create) or Ticket (update) first',
+          value: '',
+        },
+      ],
+    };
+  }
+
+  const fields = await fetchFormFields(this, formId);
+  const results: INodeListSearchItems[] = [];
+
+  for (const field of fields) {
+    const name = `${field.name} (${field.technical_name})`;
+    if (
+      !matchesFilter(name, filter) &&
+      !matchesFilter(field.technical_name, filter) &&
+      !matchesFilter(field.name, filter)
+    ) {
+      continue;
+    }
+    results.push({ name, value: field.technical_name });
+  }
+
+  if (results.length === 0) {
+    return { results: [{ name: 'No custom fields on this form', value: '' }] };
   }
 
   return { results };

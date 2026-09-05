@@ -8,7 +8,7 @@ import type {
 
 const BASE_URL = 'https://rest.qwease.fr/api';
 
-type QweaseContext = IExecuteFunctions | ILoadOptionsFunctions;
+export type QweaseContext = IExecuteFunctions | ILoadOptionsFunctions;
 
 export function qweaseListFromResponse(response: IDataObject | IDataObject[]): IDataObject[] {
   if (Array.isArray(response)) {
