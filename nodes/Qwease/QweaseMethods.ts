@@ -7,9 +7,11 @@ import type {
 
 import { qweaseApiRequest, qweaseListFromResponse } from './GenericFunctions';
 import {
+  extractLocatorValue,
   fetchEntityFields,
   fetchFormFields,
   fetchFormStatusItems,
+  resolveCustomFieldOptions,
   resolveFormIdForLists,
 } from './FormFieldsHelper';
 
@@ -259,6 +261,54 @@ export async function getDeviceCustomFields(
   filter?: string,
 ): Promise<INodeListSearchResult> {
   return listEntityCustomFields(this, 'device', filter, 'No device custom fields found');
+}
+
+export async function getCustomFieldOptions(
+  this: ILoadOptionsFunctions,
+  filter?: string,
+): Promise<INodeListSearchResult> {
+  let keyParam: unknown;
+  try {
+    keyParam = this.getCurrentNodeParameter('&key');
+  } catch {
+    keyParam = undefined;
+  }
+
+  const technicalName = extractLocatorValue(keyParam);
+  if (!technicalName) {
+    return {
+      results: [{ name: 'Select a Field first', value: '' }],
+    };
+  }
+
+  const options = await resolveCustomFieldOptions(this, technicalName);
+  const results: INodeListSearchItems[] = [];
+
+  for (const option of options) {
+    const id = option.id;
+    if (id === undefined || id === null || id === '') {
+      continue;
+    }
+    const name = String(option.name || option.display_name || id);
+    const value = String(id);
+    if (!matchesFilter(name, filter) && !matchesFilter(value, filter)) {
+      continue;
+    }
+    results.push({ name, value });
+  }
+
+  if (results.length === 0) {
+    return {
+      results: [
+        {
+          name: 'No list options — switch Field Value to By Value',
+          value: '',
+        },
+      ],
+    };
+  }
+
+  return { results };
 }
 
 export async function getClients(

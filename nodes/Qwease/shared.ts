@@ -131,9 +131,32 @@ export function customFieldsFixedCollectionWithList(
           {
             displayName: 'Field Value',
             name: 'value',
-            type: 'string',
-            default: '',
-            description: 'For list fields, use the option ID.',
+            type: 'resourceLocator',
+            default: { mode: 'list', value: '' },
+            description:
+              'For list fields: pick an option. Otherwise switch to By Value and enter text / ID.',
+            typeOptions: {
+              loadOptionsDependsOn: ['&key', '&key.value'],
+            },
+            modes: [
+              {
+                displayName: 'From List',
+                name: 'list',
+                type: 'list',
+                placeholder: 'Select an option...',
+                typeOptions: {
+                  searchListMethod: 'getCustomFieldOptions',
+                  searchable: true,
+                },
+              },
+              {
+                displayName: 'By Value',
+                name: 'id',
+                type: 'string',
+                placeholder: 'Text value or option ID',
+                hint: 'Use for non-list fields, or paste an option ID',
+              },
+            ],
           },
         ],
       },

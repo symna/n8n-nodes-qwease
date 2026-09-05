@@ -11,6 +11,7 @@ import {
   getClients,
   getClientsLoad,
   getClientCustomFields,
+  getCustomFieldOptions,
   getDevices,
   getDevicesLoad,
   getDeviceCustomFields,
@@ -134,6 +135,7 @@ export class Qwease implements INodeType {
       getUserCustomFields,
       getClientCustomFields,
       getDeviceCustomFields,
+      getCustomFieldOptions,
     },
     loadOptions: {
       getUsersLoad,

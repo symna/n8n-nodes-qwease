@@ -18,7 +18,7 @@ type CollectionFields = IDataObject & {
   owner?: unknown;
   serialNumber?: string;
   isActive?: boolean;
-  customFieldsUi?: { field?: Array<{ key: unknown; value: string }> };
+  customFieldsUi?: { field?: Array<{ key: unknown; value: unknown }> };
 };
 
 function applyCommonOptional(body: IDataObject, fields: CollectionFields): void {

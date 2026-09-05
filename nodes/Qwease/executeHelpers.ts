@@ -4,7 +4,7 @@ import { qweaseApiRequest, qweaseListFromResponse } from './GenericFunctions';
 import { extractLocatorValue } from './FormFieldsHelper';
 
 type CustomFieldsUi = {
-  field?: Array<{ key: unknown; value: string }>;
+  field?: Array<{ key: unknown; value: unknown }>;
 };
 
 export function parseOptionalInt(value: unknown): number | undefined {
@@ -45,7 +45,7 @@ export function buildCustomFieldsFromUi(
   for (const entry of fields) {
     const key = extractLocatorValue(entry.key);
     if (key) {
-      result[key] = entry.value ?? '';
+      result[key] = extractLocatorValue(entry.value);
     }
   }
   return Object.keys(result).length ? result : undefined;

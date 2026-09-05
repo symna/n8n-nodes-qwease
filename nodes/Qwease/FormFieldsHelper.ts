@@ -156,6 +156,76 @@ export async function fetchEntityFields(
   return fields;
 }
 
+export async function fetchFieldListOptions(
+  context: QweaseContext,
+  fieldId: number,
+): Promise<IDataObject[]> {
+  const response = await qweaseApiRequest.call(
+    context,
+    'GET',
+    `/fields/${fieldId}/listoptions/`,
+  );
+  return qweaseListFromResponse(response);
+}
+
+function optionsFromField(field: QweaseFormField): IDataObject[] {
+  if (Array.isArray(field.optionslist) && field.optionslist.length > 0) {
+    return field.optionslist;
+  }
+  return [];
+}
+
+export async function resolveScopedCustomField(
+  context: ILoadOptionsFunctions,
+  technicalName: string,
+): Promise<QweaseFormField | undefined> {
+  if (!technicalName) {
+    return undefined;
+  }
+
+  const resource = context.getCurrentNodeParameter('resource') as string | undefined;
+  let fields: QweaseFormField[] = [];
+
+  if (resource === 'ticket') {
+    const formId = await resolveFormIdForLists(context);
+    if (!formId) {
+      return undefined;
+    }
+    fields = await fetchFormFields(context, formId);
+  } else if (resource === 'user') {
+    fields = await fetchEntityFields(context, 'user');
+  } else if (resource === 'organization') {
+    fields = await fetchEntityFields(context, 'client');
+  } else if (resource === 'device') {
+    fields = await fetchEntityFields(context, 'device');
+  } else {
+    return undefined;
+  }
+
+  return fields.find((field) => field.technical_name === technicalName);
+}
+
+export async function resolveCustomFieldOptions(
+  context: ILoadOptionsFunctions,
+  technicalName: string,
+): Promise<IDataObject[]> {
+  const field = await resolveScopedCustomField(context, technicalName);
+  if (!field) {
+    return [];
+  }
+
+  const embedded = optionsFromField(field);
+  if (embedded.length > 0) {
+    return embedded;
+  }
+
+  if (!field.id) {
+    return [];
+  }
+
+  return fetchFieldListOptions(context, field.id);
+}
+
 export async function fetchFormStatusItems(
   context: QweaseContext,
   formId: number,
