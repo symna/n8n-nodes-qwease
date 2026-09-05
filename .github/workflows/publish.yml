@@ -20,7 +20,20 @@ jobs:
           node-version: '24'
           cache: 'npm'
       - name: Install dependencies
-        run: npm ci
+        run: |
+          set -o pipefail
+          npm ci 2>&1 | tee /tmp/npm-ci.log
+          status=${PIPESTATUS[0]}
+          if [ "$status" -ne 0 ]; then
+            echo "::group::npm ci log (tail)"
+            tail -n 80 /tmp/npm-ci.log
+            echo "::endgroup::"
+            # Surface last lines as annotations (visible without login)
+            tail -n 25 /tmp/npm-ci.log | while IFS= read -r line; do
+              echo "::error title=npm ci::$line"
+            done
+            exit "$status"
+          fi
       - name: Release
         run: |
           [ -n "$NPM_TOKEN" ] && npm config set //registry.npmjs.org/:_authToken "$NPM_TOKEN"
