@@ -54,11 +54,12 @@ const idModeValidation = [
   },
 ];
 
-const userResourceLocatorModes: INodeProperties['modes'] = [
+const userResourceLocatorModes = [
   {
     displayName: 'From List',
     name: 'list',
     type: 'list',
+    default: '',
     placeholder: 'Select a user...',
     typeOptions: {
       searchListMethod: 'getUsers',
@@ -69,16 +70,18 @@ const userResourceLocatorModes: INodeProperties['modes'] = [
     displayName: 'By ID',
     name: 'id',
     type: 'string',
+    default: '',
     placeholder: '1',
     validation: idModeValidation,
   },
-];
+] as unknown as NonNullable<INodeProperties['modes']>;
 
-const teamResourceLocatorModes: INodeProperties['modes'] = [
+const teamResourceLocatorModes = [
   {
     displayName: 'From List',
     name: 'list',
     type: 'list',
+    default: '',
     placeholder: 'Select a team...',
     typeOptions: {
       searchListMethod: 'getTeams',
@@ -89,10 +92,11 @@ const teamResourceLocatorModes: INodeProperties['modes'] = [
     displayName: 'By ID',
     name: 'id',
     type: 'string',
+    default: '',
     placeholder: '1',
     validation: idModeValidation,
   },
-];
+] as unknown as NonNullable<INodeProperties['modes']>;
 
 const priorityOptions = [
   { name: 'Very High', value: 'very_high' },
@@ -146,6 +150,7 @@ const optionalTicketFields: INodeProperties[] = [
         displayName: 'From List',
         name: 'list',
         type: 'list',
+        default: '',
         placeholder: 'Select a status...',
         typeOptions: {
           searchListMethod: 'getFormStatuses',
@@ -156,10 +161,11 @@ const optionalTicketFields: INodeProperties[] = [
         displayName: 'By ID',
         name: 'id',
         type: 'string',
+        default: '',
         placeholder: '1',
         validation: idModeValidation,
       },
-    ],
+    ] as unknown as NonNullable<INodeProperties['modes']>,
   },
   {
     displayName: 'Desired Resolution Date',
@@ -191,6 +197,7 @@ export const ticketFields: INodeProperties[] = [
         displayName: 'From List',
         name: 'list',
         type: 'list',
+        default: '',
         placeholder: 'Select a ticket...',
         typeOptions: {
           searchListMethod: 'getTickets',
@@ -201,10 +208,11 @@ export const ticketFields: INodeProperties[] = [
         displayName: 'By ID',
         name: 'id',
         type: 'string',
+        default: '',
         placeholder: '123',
         validation: idModeValidation,
       },
-    ],
+    ] as unknown as NonNullable<INodeProperties['modes']>,
   },
   {
     displayName: 'Type',
@@ -241,6 +249,7 @@ export const ticketFields: INodeProperties[] = [
         displayName: 'From List',
         name: 'list',
         type: 'list',
+        default: '',
         placeholder: 'Select a form...',
         typeOptions: {
           searchListMethod: 'getForms',
@@ -251,10 +260,11 @@ export const ticketFields: INodeProperties[] = [
         displayName: 'By ID',
         name: 'id',
         type: 'string',
+        default: '',
         placeholder: '1',
         validation: idModeValidation,
       },
-    ],
+    ] as unknown as NonNullable<INodeProperties['modes']>,
   },
   {
     displayName: 'For User',

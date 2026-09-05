@@ -3,8 +3,9 @@ import type {
   INodeExecutionData,
   INodeType,
   INodeTypeDescription,
+  JsonObject,
 } from 'n8n-workflow';
-import { NodeOperationError } from 'n8n-workflow';
+import { NodeApiError, NodeConnectionTypes, NodeOperationError } from 'n8n-workflow';
 
 import { qweaseApiRequest, qweaseListFromResponse } from './GenericFunctions';
 import { buildTicketBodyFromParameters, getTicketIdParameter } from './TicketBody';
@@ -64,7 +65,7 @@ export class Qwease implements INodeType {
   description: INodeTypeDescription = {
     displayName: 'Qwease',
     name: 'qwease',
-    icon: 'file:qwease.png',
+    icon: { light: 'file:qwease.svg', dark: 'file:qwease.dark.svg' },
     group: ['transform'],
     version: 1,
     subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
@@ -73,8 +74,8 @@ export class Qwease implements INodeType {
     defaults: {
       name: 'Qwease',
     },
-    inputs: ['main'],
-    outputs: ['main'],
+    inputs: [NodeConnectionTypes.Main],
+    outputs: [NodeConnectionTypes.Main],
     usableAsTool: true,
     credentials: [
       {
@@ -230,7 +231,10 @@ export class Qwease implements INodeType {
           returnData.push({ json: { error: (error as Error).message }, pairedItem: { item: i } });
           continue;
         }
-        throw error;
+        if (error instanceof NodeOperationError || error instanceof NodeApiError) {
+          throw error;
+        }
+        throw new NodeApiError(this.getNode(), error as JsonObject, { itemIndex: i });
       }
     }
 

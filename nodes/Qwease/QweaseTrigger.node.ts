@@ -8,7 +8,7 @@ import type {
   IWebhookFunctions,
   IWebhookResponseData,
 } from 'n8n-workflow';
-import { NodeOperationError } from 'n8n-workflow';
+import { NodeConnectionTypes, NodeOperationError } from 'n8n-workflow';
 
 const EVENT_OPTIONS = [
   { name: 'Ticket Created', value: 'ticket_created' },
@@ -45,15 +45,16 @@ export class QweaseTrigger implements INodeType {
   description: INodeTypeDescription = {
     displayName: 'Qwease Trigger',
     name: 'qweaseTrigger',
-    icon: 'file:qwease.png',
+    icon: { light: 'file:qwease.svg', dark: 'file:qwease.dark.svg' },
     group: ['trigger'],
     version: 1,
+    subtitle: '={{$parameter["events"].length ? $parameter["events"].join(", ") : "All events"}}',
     description: 'Starts the workflow when Qwease sends a signed webhook event',
     defaults: {
       name: 'Qwease Trigger',
     },
     inputs: [],
-    outputs: ['main'],
+    outputs: [NodeConnectionTypes.Main],
     webhooks: [
       {
         name: 'default',
@@ -98,7 +99,6 @@ export class QweaseTrigger implements INodeType {
           'Whether to still emit the item when HMAC verification fails (not recommended in production)',
       },
     ],
-		usableAsTool: true,
   };
 
   webhookMethods = {

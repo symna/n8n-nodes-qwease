@@ -20,6 +20,7 @@ export function resourceLocatorModes(
       displayName: 'From List',
       name: 'list',
       type: 'list',
+      default: '',
       placeholder: listPlaceholder,
       typeOptions: {
         searchListMethod,
@@ -30,10 +31,11 @@ export function resourceLocatorModes(
       displayName: 'By ID',
       name: 'id',
       type: 'string',
+      default: '',
       placeholder: idPlaceholder,
       validation: idModeValidation,
     },
-  ];
+  ] as unknown as NonNullable<INodeProperties['modes']>;
 }
 
 export const returnAllLimitFields = (resource: string): INodeProperties[] => [
@@ -115,6 +117,7 @@ export function customFieldsFixedCollectionWithList(
                 displayName: 'From List',
                 name: 'list',
                 type: 'list',
+                default: '',
                 placeholder: 'Select a field...',
                 typeOptions: {
                   searchListMethod,
@@ -125,10 +128,11 @@ export function customFieldsFixedCollectionWithList(
                 displayName: 'By Name',
                 name: 'name',
                 type: 'string',
+                default: '',
                 placeholder: 'Customfield1',
                 hint: 'technical_name from Qwease',
               },
-            ],
+            ] as unknown as NonNullable<INodeProperties['modes']>,
           },
           {
             displayName: 'Field Value',
@@ -145,6 +149,7 @@ export function customFieldsFixedCollectionWithList(
                 displayName: 'From List',
                 name: 'list',
                 type: 'list',
+                default: '',
                 placeholder: 'Select an option...',
                 typeOptions: {
                   searchListMethod: 'getCustomFieldOptions',
@@ -155,10 +160,11 @@ export function customFieldsFixedCollectionWithList(
                 displayName: 'By Value',
                 name: 'id',
                 type: 'string',
+                default: '',
                 placeholder: 'Text value or option ID',
                 hint: 'Use for non-list fields, or paste an option ID',
               },
-            ],
+            ] as unknown as NonNullable<INodeProperties['modes']>,
           },
         ],
       },
